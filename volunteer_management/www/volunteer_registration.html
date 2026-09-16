@@ -1,0 +1,684 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+<style>
+  :root {
+    --brand-primary: #8e1537;
+    --brand-dark: #630c24;
+    --brand-gold: #f39c12;
+    --card-bg: #ffffff;
+  }
+  .vr-hero {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-dark) 100%);
+    color: white;
+    padding: 35px 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(142, 21, 55, 0.2);
+    text-align: center;
+  }
+  .vr-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .vr-hero .campus-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  }
+  .stat-card.full {
+    border-left: 5px solid #e53e3e;
+    background: #fff5f5;
+  }
+  .stat-card.open {
+    border-left: 5px solid #38a169;
+  }
+  .stat-title {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2d3748;
+  }
+  .stat-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .stat-badge.badge-open {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+  .stat-badge.badge-full {
+    background: #fed7d7;
+    color: #742a2a;
+  }
+  .vr-form-container {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+  }
+  .section-label {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 0.2rem rgba(142, 21, 55, 0.15);
+  }
+  .btn-submit {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .btn-submit:hover {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+    color: white;
+  }
+  .btn-choice {
+    padding: 12px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  .btn-check:checked + .btn-outline-brand {
+    background-color: var(--brand-primary);
+    color: white;
+    border-color: var(--brand-primary);
+  }
+  .btn-outline-brand {
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+  .btn-outline-brand:hover {
+    background-color: #fdf2f4;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+  .confirmation-card {
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #38a169;
+    padding: 35px;
+    box-shadow: 0 10px 30px rgba(56, 161, 105, 0.15);
+    text-align: center;
+  }
+  .ref-pill {
+    background: #edf2f7;
+    color: var(--brand-primary);
+    font-size: 1.8rem;
+    font-weight: 800;
+    padding: 8px 24px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin: 15px 0;
+    border: 2px dashed var(--brand-primary);
+  }
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #confirmationContainer, #confirmationContainer * {
+      visibility: visible;
+    }
+    #confirmationContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    .no-print {
+      display: none !important;
+    }
+  }
+</style>
+
+<div class="container my-4" style="max-width: 960px;">
+  <!-- Hero Header -->
+  <div class="vr-hero">
+    <h1>Amma’s Birthday – Volunteer Registration</h1>
+    <div class="campus-badge">Coimbatore Campus</div>
+    <p class="mt-3 mb-0" style="opacity: 0.9;">Join as a volunteer to serve during the auspicious Amma's Birthday celebrations.</p>
+  </div>
+
+  <!-- Registration Window Notification if Closed -->
+  <div id="windowAlert" class="alert alert-warning text-center fw-bold" style="display: none;"></div>
+
+  <!-- Live Capacity Overview Cards -->
+  <div class="row g-3 mb-4" id="statCardsRow">
+    <div class="col-6 col-md-3">
+      <div class="stat-card" id="card-Female-Students">
+        <div class="stat-title">Female Students</div>
+        <div class="stat-number" id="count-Female-Students">-- / 216</div>
+        <div class="stat-badge" id="badge-Female-Students">Loading...</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card" id="card-Male-Students">
+        <div class="stat-title">Male Students</div>
+        <div class="stat-number" id="count-Male-Students">-- / 216</div>
+        <div class="stat-badge" id="badge-Male-Students">Loading...</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card" id="card-Female-Staff">
+        <div class="stat-title">Female Staff</div>
+        <div class="stat-number" id="count-Female-Staff">-- / 22</div>
+        <div class="stat-badge" id="badge-Female-Staff">Loading...</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card" id="card-Male-Staff">
+        <div class="stat-title">Male Staff</div>
+        <div class="stat-number" id="count-Male-Staff">-- / 22</div>
+        <div class="stat-badge" id="badge-Male-Staff">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Form Card -->
+  <div class="vr-form-container" id="formContainer">
+    <form id="volunteerForm" novalidate>
+      <!-- Step 1: Classification -->
+      <div class="section-label">1. Select Participant Category & Gender</div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Participant Category <span class="text-danger">*</span></label>
+          <div class="d-flex gap-2">
+            <input type="radio" class="btn-check" name="participant_category" id="catStudent" value="Student" autocomplete="off">
+            <label class="btn btn-outline-brand flex-fill btn-choice" for="catStudent">Student</label>
+
+            <input type="radio" class="btn-check" name="participant_category" id="catStaff" value="Staff" autocomplete="off">
+            <label class="btn btn-outline-brand flex-fill btn-choice" for="catStaff">Staff</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Gender <span class="text-danger">*</span></label>
+          <div class="d-flex gap-2">
+            <input type="radio" class="btn-check" name="gender" id="genderFemale" value="Female" autocomplete="off">
+            <label class="btn btn-outline-brand flex-fill btn-choice" for="genderFemale">Female</label>
+
+            <input type="radio" class="btn-check" name="gender" id="genderMale" value="Male" autocomplete="off">
+            <label class="btn btn-outline-brand flex-fill btn-choice" for="genderMale">Male</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Capacity Alert Banner -->
+      <div id="categoryAlert" class="alert mt-3" style="display: none;"></div>
+
+      <!-- Dynamic Form Fields Container -->
+      <div id="dynamicFieldsContainer" style="display: none;">
+        <!-- Common Info -->
+        <div class="section-label mt-4">2. Volunteer Information</div>
+        <div class="mb-3">
+          <label for="fullName" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Enter your full name" required>
+        </div>
+
+        <!-- Student Fields -->
+        <div id="studentFields" style="display: none;">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="enrollmentNumber" class="form-label fw-bold">Enrollment Number <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="enrollmentNumber" name="enrollment_number" placeholder="e.g. CB.EN.U4CSE21001" style="text-transform: uppercase;">
+              <small class="text-muted">Unique enrollment number will be verified.</small>
+            </div>
+            <div class="col-md-6">
+              <label for="yearOfStudy" class="form-label fw-bold">Year of Study <span class="text-danger">*</span></label>
+              <select class="form-select" id="yearOfStudy" name="year_of_study"></select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="course" class="form-label fw-bold">Course <span class="text-danger">*</span></label>
+              <select class="form-select" id="course" name="course"></select>
+            </div>
+            <div class="col-md-6">
+              <label for="branch" class="form-label fw-bold">Branch <span class="text-danger">*</span></label>
+              <select class="form-select" id="branch" name="branch"></select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="school" class="form-label fw-bold">School <span class="text-danger">*</span></label>
+            <select class="form-select" id="school" name="school"></select>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="facultyName" class="form-label fw-bold">Faculty-in-Charge Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="facultyName" name="faculty_name" placeholder="Name of Faculty-in-Charge">
+            </div>
+            <div class="col-md-6">
+              <label for="facultyPhone" class="form-label fw-bold">Faculty-in-Charge Contact Number <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" id="facultyPhone" name="faculty_phone" placeholder="10-digit mobile number" maxlength="15">
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Fields -->
+        <div id="staffFields" style="display: none;">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="department" class="form-label fw-bold">Department <span class="text-danger">*</span></label>
+              <select class="form-select" id="department" name="department"></select>
+            </div>
+            <div class="col-md-6">
+              <label for="staffSchool" class="form-label fw-bold">School <span class="text-danger">*</span></label>
+              <select class="form-select" id="staffSchool" name="staff_school"></select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="contactNumber" class="form-label fw-bold">Contact Number <span class="text-danger">*</span></label>
+            <input type="tel" class="form-control" id="contactNumber" name="contact_number" placeholder="10-digit mobile number" maxlength="15">
+          </div>
+        </div>
+
+        <!-- General Error Alert -->
+        <div id="submitErrorAlert" class="alert alert-danger mt-3" style="display: none;"></div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-4">
+          <button type="submit" class="btn btn-submit" id="btnSubmit">
+            <span id="btnSubmitSpinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+            Submit Registration
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Confirmation Screen -->
+  <div id="confirmationContainer" style="display: none;">
+    <div class="confirmation-card">
+      <div style="font-size: 3rem; color: #38a169;">✓</div>
+      <h2 class="fw-bold mt-2" style="color: #22543d;">Registration Confirmed!</h2>
+      <p class="text-muted">Thank you for registering as a volunteer for Amma's Birthday Celebrations.</p>
+
+      <div>Your Registration ID:</div>
+      <div class="ref-pill" id="confRegId">VR-2026-00000</div>
+
+      <div class="card p-3 my-3 text-start mx-auto" style="max-width: 500px; background: #f8fafc;">
+        <div class="row py-1 border-bottom">
+          <div class="col-5 fw-bold">Name:</div>
+          <div class="col-7" id="confName">--</div>
+        </div>
+        <div class="row py-1 border-bottom">
+          <div class="col-5 fw-bold">Category:</div>
+          <div class="col-7" id="confCategory">--</div>
+        </div>
+        <div class="row py-1 border-bottom" id="confEnrollRow" style="display: none;">
+          <div class="col-5 fw-bold">Enrollment No:</div>
+          <div class="col-7" id="confEnroll">--</div>
+        </div>
+        <div class="row py-1 border-bottom">
+          <div class="col-5 fw-bold">Group:</div>
+          <div class="col-7" id="confGroup">--</div>
+        </div>
+        <div class="row py-1">
+          <div class="col-5 fw-bold">Date & Time:</div>
+          <div class="col-7" id="confDateTime">--</div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mt-4 no-print">
+        <button class="btn btn-primary px-4 py-2" onclick="window.print()">
+          <i class="fa fa-print me-1"></i> Print / Save Slip
+        </button>
+        <button class="btn btn-outline-secondary px-4 py-2" onclick="resetFormForNewRegistration()">
+          Register Another Volunteer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let liveData = null;
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadAvailability();
+
+  // Radio button listeners
+  document.querySelectorAll('input[name="participant_category"], input[name="gender"]').forEach(function(radio) {
+    radio.addEventListener('change', handleClassificationChange);
+  });
+
+  // Form submission
+  document.getElementById("volunteerForm").addEventListener("submit", handleSubmit);
+});
+
+function loadAvailability() {
+  fetch("/api/method/volunteer_management.api.get_availability")
+    .then(r => r.json())
+    .then(data => {
+      if (data.message) {
+        liveData = data.message;
+        updateAvailabilityUI(liveData);
+        populateDropdowns(liveData.master_options);
+      }
+    })
+    .catch(err => {
+      console.error("Error loading availability:", err);
+    });
+}
+
+function updateAvailabilityUI(data) {
+  if (!data.is_open) {
+    const alertBox = document.getElementById("windowAlert");
+    alertBox.textContent = data.window_message || "Volunteer registration is currently closed.";
+    alertBox.style.display = "block";
+    document.getElementById("btnSubmit").disabled = true;
+  } else {
+    document.getElementById("windowAlert").style.display = "none";
+  }
+
+  const catKeys = ["Female Students", "Male Students", "Female Staff", "Male Staff"];
+  catKeys.forEach(k => {
+    const cat = data.categories[k];
+    const idSafe = k.replace(" ", "-");
+    const countEl = document.getElementById("count-" + idSafe);
+    const badgeEl = document.getElementById("badge-" + idSafe);
+    const cardEl = document.getElementById("card-" + idSafe);
+
+    if (countEl && cat) {
+      countEl.textContent = cat.registered + " / " + cat.capacity;
+      if (cat.is_full) {
+        badgeEl.textContent = "FULL";
+        badgeEl.className = "stat-badge badge-full";
+        cardEl.className = "stat-card full";
+      } else {
+        badgeEl.textContent = cat.remaining + " slots left";
+        badgeEl.className = "stat-badge badge-open";
+        cardEl.className = "stat-card open";
+      }
+    }
+  });
+
+  // Recheck selected group if any
+  handleClassificationChange();
+}
+
+function populateDropdowns(options) {
+  if (!options) return;
+  const populate = (id, list) => {
+    const el = document.getElementById(id);
+    if (!el || !list) return;
+    el.innerHTML = '<option value="">-- Select --</option>';
+    list.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item;
+      opt.textContent = item;
+      el.appendChild(opt);
+    });
+  };
+
+  populate("yearOfStudy", options.year_of_study);
+  populate("course", options.course);
+  populate("branch", options.branch);
+  populate("school", options.school);
+  populate("department", options.department);
+  populate("staffSchool", options.staff_school);
+}
+
+function getSelectedGroup() {
+  const cat = document.querySelector('input[name="participant_category"]:checked');
+  const gen = document.querySelector('input[name="gender"]:checked');
+  if (!cat || !gen) return null;
+
+  if (cat.value === "Student" && gen.value === "Female") return "Female Students";
+  if (cat.value === "Student" && gen.value === "Male") return "Male Students";
+  if (cat.value === "Staff" && gen.value === "Female") return "Female Staff";
+  if (cat.value === "Staff" && gen.value === "Male") return "Male Staff";
+  return null;
+}
+
+function handleClassificationChange() {
+  const cat = document.querySelector('input[name="participant_category"]:checked');
+  const gen = document.querySelector('input[name="gender"]:checked');
+  const group = getSelectedGroup();
+
+  const dynamicContainer = document.getElementById("dynamicFieldsContainer");
+  const studentFields = document.getElementById("studentFields");
+  const staffFields = document.getElementById("staffFields");
+  const alertBox = document.getElementById("categoryAlert");
+  const submitBtn = document.getElementById("btnSubmit");
+
+  if (!cat || !gen || !group) {
+    dynamicContainer.style.display = "none";
+    alertBox.style.display = "none";
+    return;
+  }
+
+  // Check capacity for group
+  if (liveData && liveData.categories && liveData.categories[group]) {
+    const groupStat = liveData.categories[group];
+    if (groupStat.is_full) {
+      alertBox.className = "alert alert-danger";
+      alertBox.textContent = group + " volunteer capacity is full (" + groupStat.capacity + "/" + groupStat.capacity + "). Registrations for this category are closed.";
+      alertBox.style.display = "block";
+      dynamicContainer.style.display = "none";
+      submitBtn.disabled = true;
+      return;
+    } else {
+      alertBox.className = "alert alert-success";
+      alertBox.textContent = group + " has " + groupStat.remaining + " volunteer slots remaining.";
+      alertBox.style.display = "block";
+    }
+  }
+
+  // Show relevant fields
+  dynamicContainer.style.display = "block";
+  submitBtn.disabled = !liveData || !liveData.is_open;
+
+  if (cat.value === "Student") {
+    studentFields.style.display = "block";
+    staffFields.style.display = "none";
+  } else {
+    studentFields.style.display = "none";
+    staffFields.style.display = "block";
+  }
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const errorBox = document.getElementById("submitErrorAlert");
+  errorBox.style.display = "none";
+
+  const cat = document.querySelector('input[name="participant_category"]:checked');
+  const gen = document.querySelector('input[name="gender"]:checked');
+  const fullName = document.getElementById("fullName").value.trim();
+
+  if (!cat || !gen) {
+    showError("Please select both Participant Category and Gender.");
+    return;
+  }
+  if (!fullName) {
+    showError("Please enter your Full Name.");
+    return;
+  }
+
+  const payload = {
+    participant_category: cat.value,
+    gender: gen.value,
+    full_name: fullName
+  };
+
+  const phoneRegex = /^(?:\+91|91|0)?([6-9]\d{9})$/;
+
+  if (cat.value === "Student") {
+    const enroll = document.getElementById("enrollmentNumber").value.trim();
+    const year = document.getElementById("yearOfStudy").value;
+    const course = document.getElementById("course").value;
+    const branch = document.getElementById("branch").value;
+    const school = document.getElementById("school").value;
+    const facName = document.getElementById("facultyName").value.trim();
+    const facPhone = document.getElementById("facultyPhone").value.trim();
+
+    if (!enroll) return showError("Enrollment Number is mandatory for Student registration.");
+    if (!year) return showError("Year of Study is mandatory.");
+    if (!course) return showError("Course is mandatory.");
+    if (!branch) return showError("Branch is mandatory.");
+    if (!school) return showError("School is mandatory.");
+    if (!facName) return showError("Faculty-in-Charge Name is mandatory.");
+    if (!facPhone || !phoneRegex.test(facPhone.replace(/[\s\-]/g, ""))) {
+      return showError("Please provide a valid 10-digit mobile number for Faculty-in-Charge Contact Number.");
+    }
+
+    payload.enrollment_number = enroll;
+    payload.year_of_study = year;
+    payload.course = course;
+    payload.branch = branch;
+    payload.school = school;
+    payload.faculty_name = facName;
+    payload.faculty_phone = facPhone;
+  } else {
+    const dept = document.getElementById("department").value;
+    const staffSchool = document.getElementById("staffSchool").value;
+    const phone = document.getElementById("contactNumber").value.trim();
+
+    if (!dept) return showError("Department is mandatory for Staff registration.");
+    if (!staffSchool) return showError("School is mandatory.");
+    if (!phone || !phoneRegex.test(phone.replace(/[\s\-]/g, ""))) {
+      return showError("Please provide a valid 10-digit mobile number for Contact Number.");
+    }
+
+    payload.department = dept;
+    payload.staff_school = staffSchool;
+    payload.contact_number = phone;
+  }
+
+  // Submit via API
+  const btn = document.getElementById("btnSubmit");
+  const spinner = document.getElementById("btnSubmitSpinner");
+  btn.disabled = true;
+  spinner.style.display = "inline-block";
+
+  fetch("/api/method/volunteer_management.api.submit_registration", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Frappe-CSRF-Token": frappe.csrf_token || ""
+    },
+    body: JSON.stringify({ data: payload })
+  })
+  .then(r => r.json())
+  .then(res => {
+    btn.disabled = false;
+    spinner.style.display = "none";
+
+    if (res.message && res.message.success) {
+      showConfirmation(res.message);
+      loadAvailability(); // refresh counts
+    } else {
+      const err = res._server_messages ? parseServerMessages(res._server_messages) : (res.exc || "Registration failed. Please verify your details.");
+      showError(err);
+    }
+  })
+  .catch(err => {
+    btn.disabled = false;
+    spinner.style.display = "none";
+    showError("A network or server error occurred. Please try again.");
+  });
+}
+
+function parseServerMessages(messagesJson) {
+  try {
+    const arr = JSON.parse(messagesJson);
+    const msgs = arr.map(m => {
+      const obj = JSON.parse(m);
+      return obj.message;
+    });
+    return msgs.join("<br>");
+  } catch (e) {
+    return messagesJson;
+  }
+}
+
+function showError(msg) {
+  const errorBox = document.getElementById("submitErrorAlert");
+  errorBox.innerHTML = msg;
+  errorBox.style.display = "block";
+  errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function showConfirmation(data) {
+  document.getElementById("formContainer").style.display = "none";
+  document.getElementById("confirmationContainer").style.display = "block";
+
+  document.getElementById("confRegId").textContent = data.registration_id;
+  document.getElementById("confName").textContent = data.full_name;
+  document.getElementById("confCategory").textContent = data.participant_category + " (" + data.gender + ")";
+  document.getElementById("confGroup").textContent = data.participant_group;
+  document.getElementById("confDateTime").textContent = data.registration_date_time;
+
+  if (data.enrollment_number) {
+    document.getElementById("confEnroll").textContent = data.enrollment_number;
+    document.getElementById("confEnrollRow").style.display = "flex";
+  } else {
+    document.getElementById("confEnrollRow").style.display = "none";
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetFormForNewRegistration() {
+  document.getElementById("volunteerForm").reset();
+  document.getElementById("confirmationContainer").style.display = "none";
+  document.getElementById("formContainer").style.display = "block";
+  document.getElementById("dynamicFieldsContainer").style.display = "none";
+  document.getElementById("categoryAlert").style.display = "none";
+  document.getElementById("submitErrorAlert").style.display = "none";
+  loadAvailability();
+}
+</script>
+{% endblock %}

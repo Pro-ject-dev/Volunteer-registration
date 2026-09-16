@@ -17,5 +17,5 @@ app_license = "mit"
 # web_include_js = "/assets/volunteer_management/js/volunteer_management.js"
 
 website_route_rules = [
-	{"from_route": "/volunteer-registration", "to_route": "volunteer-registration"},
+	{"from_route": "/volunteer-registration", "to_route": "volunteer_registration"},
 ]

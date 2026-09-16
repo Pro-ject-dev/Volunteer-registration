@@ -1,0 +1,233 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-09-16 23:26:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "classification_section",
+  "participant_category",
+  "gender",
+  "participant_group",
+  "cb_status",
+  "status",
+  "registration_date_time",
+  "details_section",
+  "full_name",
+  "student_section",
+  "enrollment_number",
+  "year_of_study",
+  "course",
+  "branch",
+  "cb_student",
+  "school",
+  "faculty_name",
+  "faculty_phone",
+  "staff_section",
+  "department",
+  "cb_staff",
+  "staff_school",
+  "contact_number",
+  "audit_section",
+  "ip_address",
+  "user_agent"
+ ],
+ "fields": [
+  {
+   "default": "VR-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "no_copy": 1,
+   "options": "VR-.YYYY.-.#####",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "classification_section",
+   "fieldtype": "Section Break",
+   "label": "Participant Classification"
+  },
+  {
+   "fieldname": "participant_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Participant Category",
+   "options": "Student\nStaff",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Gender",
+   "options": "Female\nMale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "participant_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Participant Group",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Confirmed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Confirmed\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "registration_date_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Registration Date/Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Participant Details"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.participant_category=='Student'",
+   "fieldname": "student_section",
+   "fieldtype": "Section Break",
+   "label": "Student Academic Details"
+  },
+  {
+   "fieldname": "enrollment_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Enrollment Number"
+  },
+  {
+   "fieldname": "year_of_study",
+   "fieldtype": "Select",
+   "label": "Year of Study",
+   "options": "\n1st Year\n2nd Year\n3rd Year\n4th Year\n5th Year\nPostgraduate\nPhD / Research\nOther"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Select",
+   "label": "Course",
+   "options": "\nB.Tech\nM.Tech\nBCA\nMCA\nB.Sc\nM.Sc\nB.A\nM.A\nB.Com\nM.Com\nBBA\nMBA\nPh.D\nIntegrated M.Sc\nOther"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Select",
+   "label": "Branch",
+   "options": "\nComputer Science and Engineering\nArtificial Intelligence\nElectronics and Communication\nElectrical and Electronics\nMechanical Engineering\nCivil Engineering\nChemical Engineering\nAerospace Engineering\nData Science\nCyber Security\nMathematics\nPhysics\nChemistry\nEnglish\nSocial Work\nManagement\nCommerce\nOther"
+  },
+  {
+   "fieldname": "cb_student",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "school",
+   "fieldtype": "Select",
+   "label": "School",
+   "options": "\nSchool of Engineering\nSchool of Computing\nSchool of Physical Sciences\nSchool of Arts, Humanities and Social Sciences\nSchool of Agricultural Sciences\nSchool of Business\nOther"
+  },
+  {
+   "fieldname": "faculty_name",
+   "fieldtype": "Data",
+   "label": "Faculty-in-Charge Name"
+  },
+  {
+   "fieldname": "faculty_phone",
+   "fieldtype": "Data",
+   "label": "Faculty-in-Charge Contact Number"
+  },
+  {
+   "depends_on": "eval:doc.participant_category=='Staff'",
+   "fieldname": "staff_section",
+   "fieldtype": "Section Break",
+   "label": "Staff Details"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Select",
+   "label": "Department",
+   "options": "\nDepartment of Computer Science and Engineering\nDepartment of Electronics and Communication Engineering\nDepartment of Electrical and Electronics Engineering\nDepartment of Mechanical Engineering\nDepartment of Civil Engineering\nDepartment of Mathematics\nDepartment of Sciences\nDepartment of English\nDepartment of Management\nDepartment of Administration\nDepartment of Student Affairs\nDepartment of Library\nDepartment of ICTS\nOther"
+  },
+  {
+   "fieldname": "cb_staff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "staff_school",
+   "fieldtype": "Select",
+   "label": "School",
+   "options": "\nSchool of Engineering\nSchool of Computing\nSchool of Physical Sciences\nSchool of Arts, Humanities and Social Sciences\nSchool of Business\nGeneral Administration\nOther"
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "audit_section",
+   "fieldtype": "Section Break",
+   "label": "Audit Information"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Small Text",
+   "label": "User Agent",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-09-16 23:26:00.000000",
+ "modified_by": "Administrator",
+ "module": "Volunteer Management",
+ "name": "Volunteer Registration",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
