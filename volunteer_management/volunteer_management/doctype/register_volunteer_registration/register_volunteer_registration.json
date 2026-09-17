@@ -131,13 +131,13 @@
    "fieldname": "course",
    "fieldtype": "Link",
    "label": "Course",
-   "options": "Course"
+   "options": "Register Course"
   },
   {
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
-   "options": "Branch"
+   "options": "Register Branch"
   },
   {
    "fieldname": "cb_student",
@@ -147,7 +147,7 @@
    "fieldname": "school",
    "fieldtype": "Link",
    "label": "School",
-   "options": "School"
+   "options": "Register School"
   },
   {
    "fieldname": "faculty_name",
@@ -181,7 +181,7 @@
    "fieldname": "staff_school",
    "fieldtype": "Link",
    "label": "School",
-   "options": "School"
+   "options": "Register School"
   },
   {
    "fieldname": "contact_number",
@@ -211,7 +211,7 @@
  "modified": "2026-09-16 23:26:00.000000",
  "modified_by": "Administrator",
  "module": "Volunteer Management",
- "name": "Volunteer Registration",
+ "name": "Register Volunteer Registration",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

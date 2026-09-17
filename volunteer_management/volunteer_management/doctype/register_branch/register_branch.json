@@ -24,7 +24,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Course",
-   "options": "Course",
+   "options": "Register Course",
    "reqd": 1
   },
   {
@@ -33,7 +33,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "School",
-   "options": "School"
+   "options": "Register School"
   },
   {
    "default": "0",
@@ -47,7 +47,7 @@
  "modified": "2026-09-17 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Volunteer Management",
- "name": "Branch",
+ "name": "Register Branch",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

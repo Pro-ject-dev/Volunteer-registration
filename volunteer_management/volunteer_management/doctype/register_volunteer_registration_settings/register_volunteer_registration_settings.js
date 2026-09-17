@@ -1,7 +1,7 @@
 // Copyright (c) 2026, Amrita Vishwa Vidyapeetham and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Volunteer Registration Settings", {
+frappe.ui.form.on("Register Register Volunteer Registration Settings", {
 	refresh(frm) {
 		frm.trigger("calculate_total");
 	},

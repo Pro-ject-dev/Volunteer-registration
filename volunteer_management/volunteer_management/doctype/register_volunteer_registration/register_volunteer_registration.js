@@ -1,7 +1,7 @@
 // Copyright (c) 2026, Amrita Vishwa Vidyapeetham and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Volunteer Registration", {
+frappe.ui.form.on("Register Volunteer Registration", {
 	setup(frm) {
 		frm.set_query("course", function() {
 			return {

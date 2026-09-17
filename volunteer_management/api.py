@@ -13,32 +13,32 @@ from volunteer_management.volunteer_management.doctype.volunteer_registration_se
 @frappe.whitelist(allow_guest=True)
 def get_availability():
 	"""
-	Exposes live registration statistics and dynamic academic hierarchy (School -> Course -> Branch).
+	Exposes live registration statistics and dynamic academic hierarchy (Register School -> Register Course -> Register Branch).
 	"""
 	stats = VolunteerRegistrationSettings.get_live_stats()
 
 	# Dynamic academic master options
 	schools = frappe.get_all(
-		"School",
+		"Register School",
 		filters={"disabled": 0},
 		fields=["name", "school_name"],
 		order_by="school_name asc",
 	)
 	courses = frappe.get_all(
-		"Course",
+		"Register Course",
 		filters={"disabled": 0},
 		fields=["name", "course_name", "school"],
 		order_by="course_name asc",
 	)
 	branches = frappe.get_all(
-		"Branch",
+		"Register Branch",
 		filters={"disabled": 0},
 		fields=["name", "branch_name", "course", "school"],
 		order_by="branch_name asc",
 	)
 
 	# Static/meta options for fields like year_of_study and department
-	doc_meta = frappe.get_meta("Volunteer Registration")
+	doc_meta = frappe.get_meta("Register Volunteer Registration")
 	options = {}
 	for fld_name in [
 		"year_of_study",
@@ -105,7 +105,7 @@ def submit_registration(data=None):
 
 	filtered_data = {k: v for k, v in data.items() if k in allowed_fields}
 
-	doc = frappe.new_doc("Volunteer Registration")
+	doc = frappe.new_doc("Register Volunteer Registration")
 	doc.update(filtered_data)
 
 	# Server sets authoritative system fields

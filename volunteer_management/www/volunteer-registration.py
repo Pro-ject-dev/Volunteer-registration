@@ -9,7 +9,7 @@ from volunteer_management.volunteer_management.doctype.volunteer_registration_se
 
 def get_context(context):
 	context.no_cache = 1
-	context.title = "Amma’s Birthday – Volunteer Registration"
-	context.settings = frappe.get_single("Volunteer Registration Settings")
+	context.title = "Amma’s Birthday – Register Volunteer Registration"
+	context.settings = frappe.get_single("Register Register Volunteer Registration Settings")
 	context.stats = VolunteerRegistrationSettings.get_live_stats()
 	return context

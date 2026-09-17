@@ -4,5 +4,5 @@
 from frappe.model.document import Document
 
 
-class Branch(Document):
+class RegisterBranch(Document):
 	pass

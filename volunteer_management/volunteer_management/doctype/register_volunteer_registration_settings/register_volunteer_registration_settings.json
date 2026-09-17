@@ -121,7 +121,7 @@
  "modified": "2026-09-16 23:25:00.000000",
  "modified_by": "Administrator",
  "module": "Volunteer Management",
- "name": "Volunteer Registration Settings",
+ "name": "Register Volunteer Registration Settings",
  "owner": "Administrator",
  "permissions": [
   {
@@ -140,4 +140,3 @@
  "sort_order": "DESC",
  "track_changes": 1
 }
-

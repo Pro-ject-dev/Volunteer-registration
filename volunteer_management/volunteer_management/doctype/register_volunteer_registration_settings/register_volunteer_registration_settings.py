@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe.utils import cint, get_datetime, now_datetime
 
 
-class VolunteerRegistrationSettings(Document):
+class RegisterVolunteerRegistrationSettings(Document):
 	def validate(self):
 		pass
 
@@ -16,17 +16,17 @@ class VolunteerRegistrationSettings(Document):
 	@staticmethod
 	def get_live_stats():
 		"""
-		Calculates live registration statistics from confirmed Volunteer Registration records.
+		Calculates live registration statistics from confirmed Register Volunteer Registration records.
 		No capacity capping or restrictions are enforced.
 		Includes dynamic academic hierarchy for server-side template rendering.
 		"""
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 
 		counts = {}
 		group_counts = frappe.db.sql(
 			"""
 			SELECT participant_group, COUNT(*) as cnt
-			FROM `tabVolunteer Registration`
+			FROM `tabRegister Volunteer Registration`
 			WHERE status = 'Confirmed'
 			GROUP BY participant_group
 			""",
@@ -70,19 +70,19 @@ class VolunteerRegistrationSettings(Document):
 
 		# Fetch dynamic academic hierarchy
 		schools = frappe.get_all(
-			"School",
+			"RegisterSchool",
 			filters={"disabled": 0},
 			fields=["name", "school_name"],
 			order_by="school_name asc",
 		)
 		courses = frappe.get_all(
-			"Course",
+			"RegisterCourse",
 			filters={"disabled": 0},
 			fields=["name", "course_name", "school"],
 			order_by="course_name asc",
 		)
 		branches = frappe.get_all(
-			"Branch",
+			"RegisterBranch",
 			filters={"disabled": 0},
 			fields=["name", "branch_name", "course", "school"],
 			order_by="branch_name asc",

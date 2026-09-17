@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "field:course_name",
- "creation": "2026-09-17 18:00:00.000000",
+ "creation": "2026-09-17 18:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -23,7 +23,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "School",
-   "options": "School",
+   "options": "Register School",
    "reqd": 1
   },
   {
@@ -35,10 +35,10 @@
   }
  ],
  "links": [],
- "modified": "2026-09-17 18:00:00.000000",
+ "modified": "2026-09-17 22:22:53.507666",
  "modified_by": "Administrator",
  "module": "Volunteer Management",
- "name": "Course",
+ "name": "Register Course",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
@@ -59,10 +59,11 @@
    "role": "All"
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "course_name,school",
  "sort_field": "course_name",
  "sort_order": "ASC",
- "title_field": "course_name",
  "states": [],
+ "title_field": "course_name",
  "track_changes": 1
 }

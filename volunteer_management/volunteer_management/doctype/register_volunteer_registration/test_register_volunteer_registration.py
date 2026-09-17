@@ -5,22 +5,22 @@ import frappe
 from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, now_datetime
 from volunteer_management.api import get_availability, submit_registration
-from volunteer_management.volunteer_management.doctype.volunteer_registration_settings.volunteer_registration_settings import (
-	VolunteerRegistrationSettings,
+from volunteer_management.volunteer_management.doctype.register_volunteer_registration_settings.register_volunteer_registration_settings import (
+	RegisterRegisterVolunteerRegistrationSettings,
 )
 
 
-class TestVolunteerRegistration(IntegrationTestCase):
+class TestRegisterVolunteerRegistration(IntegrationTestCase):
 	def setUp(self):
 		super().setUp()
 		# Clean up any existing volunteer registrations
-		frappe.db.delete("Volunteer Registration")
+		frappe.db.delete("Register Volunteer Registration")
 		frappe.db.commit()
 		from volunteer_management.fixtures.seed_academic_data import seed
 		seed()
 
 		# Reset settings to default
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 		settings.event_name = "Amma's Birthday"
 		settings.campus = "Coimbatore Campus"
 		settings.registration_open = 1
@@ -34,13 +34,13 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		frappe.db.commit()
 
 	def tearDown(self):
-		frappe.db.delete("Volunteer Registration")
+		frappe.db.delete("Register Volunteer Registration")
 		frappe.db.commit()
 		super().tearDown()
 
 	def test_01_female_student_registration(self):
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Amrita Nair",
@@ -48,7 +48,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "3rd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Ramesh",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -60,7 +60,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_02_male_student_registration(self):
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Karthik Kumar",
@@ -68,7 +68,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "4th Year",
 			"course": "B.Tech",
 			"branch": "Artificial Intelligence",
-			"school": "School of Computing",
+			"school": "RegisterSchool of Computing",
 			"faculty_name": "Dr. Suresh",
 			"faculty_phone": "9876543211",
 		}).insert()
@@ -78,12 +78,12 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_03_female_staff_registration(self):
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Female",
 			"full_name": "Prof. Lakshmi Devi",
 			"department": "Department of Mathematics",
-			"staff_school": "School of Physical Sciences",
+			"staff_school": "RegisterSchool of Physical Sciences",
 			"contact_number": "9876543212",
 		}).insert()
 
@@ -94,12 +94,12 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_04_male_staff_registration(self):
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Male",
 			"full_name": "Prof. Anand Mohan",
 			"department": "Department of Computer Science and Engineering",
-			"staff_school": "School of Engineering",
+			"staff_school": "RegisterSchool of Engineering",
 			"contact_number": "9876543213",
 		}).insert()
 
@@ -109,14 +109,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_05_missing_mandatory_fields_student(self):
 		# Missing enrollment number
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Pooja Pillai",
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Civil Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Ramesh",
 			"faculty_phone": "9876543210",
 		})
@@ -124,14 +124,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 		# Missing branch
 		doc2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Pooja Pillai",
 			"enrollment_number": "CB.EN.U4CIV21003",
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Ramesh",
 			"faculty_phone": "9876543210",
 		})
@@ -140,11 +140,11 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_06_missing_mandatory_fields_staff(self):
 		# Missing department
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Male",
 			"full_name": "Ravi Shankar",
-			"staff_school": "School of Engineering",
+			"staff_school": "RegisterSchool of Engineering",
 			"contact_number": "9876543210",
 		})
 		self.assertRaises(frappe.ValidationError, doc.insert)
@@ -152,7 +152,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_07_invalid_phone_numbers(self):
 		# Less than 10 digits
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Ananya",
@@ -160,7 +160,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Mechanical Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "12345",
 		})
@@ -168,7 +168,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_08_duplicate_enrollment_exact(self):
 		frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Geetha",
@@ -176,14 +176,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
 
 		# Submitting with same enrollment number
 		doc2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Geetha Two",
@@ -191,7 +191,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		})
@@ -200,7 +200,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_09_duplicate_enrollment_normalization(self):
 		# 'cb.en.u4cse21020'
 		frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Sanjay",
@@ -208,14 +208,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
 
 		# Submitting with '  CB.EN.U4CSE21020  ' (uppercase + spaces)
 		doc2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Sanjay Duplicate",
@@ -223,7 +223,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		})
@@ -231,7 +231,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_10_cancelled_registration_releases_duplicate(self):
 		doc1 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Deepa",
@@ -239,7 +239,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -250,7 +250,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 		# Now submitting with the same enrollment number should SUCCEED
 		doc2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Deepa New",
@@ -258,7 +258,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -266,7 +266,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 
 	def test_11_cancelled_registration_releases_capacity(self):
 		doc1 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Female",
 			"full_name": "Staff One",
@@ -277,7 +277,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		self.assertEqual(doc1.status, "Confirmed")
 
 		doc2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Female",
 			"full_name": "Staff Two",
@@ -292,12 +292,12 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		doc1.save()
 		self.assertEqual(doc1.status, "Cancelled")
 	def test_12_registration_before_opening_time(self):
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 		settings.opening_date_time = add_days(now_datetime(), 1)  # Tomorrow
 		settings.save()
 
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Early Bird",
@@ -305,19 +305,19 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Civil Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		})
 		self.assertRaises(frappe.ValidationError, doc.insert)
 
 	def test_13_registration_after_closing_time(self):
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 		settings.closing_date_time = add_days(now_datetime(), -1)  # Yesterday
 		settings.save()
 
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Late Comers",
@@ -325,19 +325,19 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Civil Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		})
 		self.assertRaises(frappe.ValidationError, doc.insert)
 
 	def test_14_manual_registration_shutdown(self):
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 		settings.registration_open = 0
 		settings.save()
 
 		doc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Blocked User",
@@ -345,7 +345,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Civil Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		})
@@ -355,7 +355,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		# With unrestricted capacity, multiple students register without capacity exceptions
 		for i in [1, 2, 3]:
 			doc = frappe.get_doc({
-				"doctype": "Volunteer Registration",
+				"doctype": "Register Volunteer Registration",
 				"participant_category": "Student",
 				"gender": "Female",
 				"full_name": f"Student {i}",
@@ -363,13 +363,13 @@ class TestVolunteerRegistration(IntegrationTestCase):
 				"year_of_study": "2nd Year",
 				"course": "B.Tech",
 				"branch": "Computer Science and Engineering",
-				"school": "School of Engineering",
+				"school": "RegisterSchool of Engineering",
 				"faculty_name": "Dr. Rao",
 				"faculty_phone": "9876543210",
 			}).insert()
 			self.assertEqual(doc.status, "Confirmed")
 	def test_16_total_capacity_calculation(self):
-		settings = frappe.get_single("Volunteer Registration Settings")
+		settings = frappe.get_single("Register Register Volunteer Registration Settings")
 		settings.female_student_capacity = 216
 		settings.male_student_capacity = 216
 		settings.female_staff_capacity = 22
@@ -380,23 +380,23 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_17_concurrent_race_condition_simulation(self):
 		# In unrestricted mode, successive registrations are accepted without capacity rejection
 		d1 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Male",
 			"full_name": "Staff First",
 			"department": "Department of ICTS",
-			"staff_school": "School of Engineering",
+			"staff_school": "RegisterSchool of Engineering",
 			"contact_number": "9876543210",
 		}).insert()
 		self.assertEqual(d1.status, "Confirmed")
 
 		d2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Staff",
 			"gender": "Male",
 			"full_name": "Staff Second",
 			"department": "Department of ICTS",
-			"staff_school": "School of Engineering",
+			"staff_school": "RegisterSchool of Engineering",
 			"contact_number": "9876543211",
 		}).insert()
 		self.assertEqual(d2.status, "Confirmed")
@@ -410,7 +410,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 			# Attempting parameter tampering:
@@ -423,7 +423,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		self.assertTrue(res["success"])
 		reg_id = res["registration_id"]
 
-		doc = frappe.get_doc("Volunteer Registration", reg_id)
+		doc = frappe.get_doc("Register Volunteer Registration", reg_id)
 		# Verify server overrode tampered fields
 		self.assertEqual(doc.status, "Confirmed")
 		self.assertEqual(doc.participant_group, "Female Students")
@@ -433,7 +433,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_19_availability_api_and_dashboard_stats(self):
 		# Register 1 female student
 		frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Stat Test",
@@ -441,7 +441,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -462,7 +462,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		)
 
 		frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Report User",
@@ -470,7 +470,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -487,7 +487,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 	def test_21_male_student_and_staff_capacities(self):
 		# Unrestricted mode allows registering multiple male students and staff
 		d1 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Male Student 1",
@@ -495,14 +495,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Mechanical Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Kumar",
 			"faculty_phone": "9876543210",
 		}).insert()
 		self.assertEqual(d1.status, "Confirmed")
 
 		d2 = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Male Student 2",
@@ -510,7 +510,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Mechanical Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Kumar",
 			"faculty_phone": "9876543210",
 		}).insert()
@@ -519,7 +519,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		# Unrestricted registrations continue past any previous capacity numbers
 		for i in [1, 2, 3]:
 			frappe.get_doc({
-				"doctype": "Volunteer Registration",
+				"doctype": "Register Volunteer Registration",
 				"participant_category": "Student",
 				"gender": "Female",
 				"full_name": f"Student {i}",
@@ -527,12 +527,12 @@ class TestVolunteerRegistration(IntegrationTestCase):
 				"year_of_study": "2nd Year",
 				"course": "B.Tech",
 				"branch": "Electronics and Communication",
-				"school": "School of Engineering",
+				"school": "RegisterSchool of Engineering",
 				"faculty_name": "Dr. Suresh",
 				"faculty_phone": "9876543210",
 			}).insert()
 
-		total_count = frappe.db.count("Volunteer Registration", {"status": "Confirmed"})
+		total_count = frappe.db.count("Register Volunteer Registration", {"status": "Confirmed"})
 		self.assertGreaterEqual(total_count, 3)
 	def test_23_report_filtering_active_only(self):
 		from volunteer_management.volunteer_management.report.combined_volunteer_registration_list.combined_volunteer_registration_list import (
@@ -540,7 +540,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		)
 
 		d_conf = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Female",
 			"full_name": "Active Confirmed",
@@ -548,14 +548,14 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 			"status": "Confirmed",
 		}).insert()
 
 		d_canc = frappe.get_doc({
-			"doctype": "Volunteer Registration",
+			"doctype": "Register Volunteer Registration",
 			"participant_category": "Student",
 			"gender": "Male",
 			"full_name": "Cancelled User",
@@ -563,7 +563,7 @@ class TestVolunteerRegistration(IntegrationTestCase):
 			"year_of_study": "2nd Year",
 			"course": "B.Tech",
 			"branch": "Computer Science and Engineering",
-			"school": "School of Engineering",
+			"school": "RegisterSchool of Engineering",
 			"faculty_name": "Dr. Rao",
 			"faculty_phone": "9876543210",
 			"status": "Confirmed",
@@ -581,19 +581,19 @@ class TestVolunteerRegistration(IntegrationTestCase):
 		cols_all, data_all = exec_combined({"status": "All"})
 		self.assertEqual(len(data_all), 2)
 	def test_24_dynamic_academic_doctypes_and_api(self):
-		# Verify School, Course, Branch exist and are returned by get_availability API
+		# Verify RegisterSchool, RegisterCourse, RegisterBranch exist and are returned by get_availability API
 		res = get_availability()
 		self.assertTrue(res["success"])
 		self.assertIn("academic", res)
 		academic = res["academic"]
 
 		schools = [s["school_name"] for s in academic["schools"]]
-		self.assertIn("School of Engineering", schools)
-		self.assertIn("School of Computing", schools)
+		self.assertIn("RegisterSchool of Engineering", schools)
+		self.assertIn("RegisterSchool of Computing", schools)
 
-		courses = [c["course_name"] for c in academic["courses"] if c["school"] == "School of Engineering"]
+		courses = [c["course_name"] for c in academic["courses"] if c["school"] == "RegisterSchool of Engineering"]
 		self.assertIn("B.Tech", courses)
 
-		branches = [b["branch_name"] for b in academic["branches"] if b["school"] == "School of Engineering"]
+		branches = [b["branch_name"] for b in academic["branches"] if b["school"] == "RegisterSchool of Engineering"]
 		self.assertIn("Computer Science and Engineering", branches)
 

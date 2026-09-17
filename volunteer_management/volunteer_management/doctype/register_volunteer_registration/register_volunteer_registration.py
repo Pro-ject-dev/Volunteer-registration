@@ -8,24 +8,24 @@ from frappe.model.document import Document
 from frappe.utils import cint, get_datetime, now_datetime
 
 
-class VolunteerRegistration(Document):
+class RegisterVolunteerRegistration(Document):
 	def before_validate(self):
 		self.resolve_academic_links()
 
 	def resolve_academic_links(self):
 		if self.participant_category == "Student":
-			if self.course and self.school and not frappe.db.exists("Course", self.course):
+			if self.course and self.school and not frappe.db.exists("RegisterCourse", self.course):
 				matched_course = frappe.db.get_value(
-					"Course",
+					"RegisterCourse",
 					{"course_name": self.course, "school": self.school},
 					"name",
 				)
 				if matched_course:
 					self.course = matched_course
 
-			if self.branch and self.course and not frappe.db.exists("Branch", self.branch):
+			if self.branch and self.course and not frappe.db.exists("RegisterBranch", self.branch):
 				matched_branch = frappe.db.get_value(
-					"Branch",
+					"RegisterBranch",
 					{"branch_name": self.branch, "course": self.course},
 					"name",
 				)
@@ -65,9 +65,9 @@ class VolunteerRegistration(Document):
 
 		if self.participant_category == "Student":
 			student_required = [
-				("school", _("School")),
-				("course", _("Course")),
-				("branch", _("Branch")),
+				("school", _("RegisterSchool")),
+				("course", _("RegisterCourse")),
+				("branch", _("RegisterBranch")),
 				("year_of_study", _("Year of Study")),
 				("enrollment_number", _("Enrollment Number")),
 			]
@@ -86,7 +86,7 @@ class VolunteerRegistration(Document):
 		elif self.participant_category == "Staff":
 			staff_required = [
 				("department", _("Department")),
-				("staff_school", _("School")),
+				("staff_school", _("RegisterSchool")),
 				("contact_number", _("Contact Number")),
 			]
 			for field, label in staff_required:
@@ -140,7 +140,7 @@ class VolunteerRegistration(Document):
 			if self.status == "Confirmed":
 				existing = frappe.db.sql(
 					"""
-					SELECT name FROM `tabVolunteer Registration`
+					SELECT name FROM `tabRegister Volunteer Registration`
 					WHERE UPPER(TRIM(enrollment_number)) = %s
 					  AND status = 'Confirmed'
 					  AND name != %s
@@ -162,7 +162,7 @@ class VolunteerRegistration(Document):
 			if frappe.flags.in_test and frappe.flags.ignore_registration_window:
 				return
 
-			settings = frappe.get_single("Volunteer Registration Settings")
+			settings = frappe.get_single("Register Register Volunteer Registration Settings")
 			if not settings.registration_open:
 				frappe.throw(_("Volunteer registration is currently closed by the administrator."))
 
