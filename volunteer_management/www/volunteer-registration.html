@@ -764,13 +764,7 @@
               <div class="field-error" id="err-staffSchool">Please select your school.</div>
             </div>
 
-            <div>
-              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="department">
-                Department <span style="color: var(--saffron);">*</span>
-              </label>
-              <select class="form-select" id="department" name="department"></select>
-              <div class="field-error" id="err-department">Please select your department.</div>
-            </div>
+            
 
             <div class="sm:col-span-2">
               <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="contactNumber">
@@ -1049,15 +1043,11 @@
     }
 
     const schoolSelect = document.getElementById("school");
-    
-    
     const staffSchoolSelect = document.getElementById("staffSchool");
 
     if (!schoolSelect) return;
 
     const currentSchool = schoolSelect.value;
-    
-    
     const currentStaffSchool = staffSchoolSelect ? staffSchoolSelect.value : "";
 
     // 1. Populate School options
@@ -1092,45 +1082,10 @@
       }
     }
 
-    // Helper function: Update courses for selected school
-    );
-      courseSelect.disabled = false;
-      if (targetCourseValue && seenCourses.has(targetCourseValue)) {
-        courseSelect.value = targetCourseValue;
-      }
-    }
-
-    // Helper function: Update branches for selected course & school
-    );
-      branchSelect.disabled = false;
-      if (targetBranchValue && seenBranches.has(targetBranchValue)) {
-        branchSelect.value = targetBranchValue;
-      }
-    }
-
     // Attach change listeners
     schoolSelect.onchange = function () {
       fieldError('school', false);
-          };
-
-    courseSelect.onchange = function () {
-      
-          };
-
-    branchSelect.onchange = function () {
-      
     };
-
-    // Sync initial state if school is selected
-    if (schoolSelect.value) {
-            if (courseSelect.value) {
-              }
-    } else {
-      courseSelect.disabled = true;
-      courseSelect.innerHTML = '<option value="">-- Select School First --</option>';
-      branchSelect.disabled = true;
-      branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
-    }
   }
 
   function populateDropdowns(options) {
@@ -1148,7 +1103,7 @@
       if (current) el.value = current;
     };
     populate("yearOfStudy", options.year_of_study);
-    populate("department", options.department);
+    
   }
 
   function getSelectedGroup() {
@@ -1261,7 +1216,7 @@
     let firstInvalid = null;
 
     if (cat.value === "Student") {
-      const fields = ['school', 'course', 'branch', 'yearOfStudy', 'enrollmentNumber'];
+      const fields = ['school', 'yearOfStudy', 'enrollmentNumber'];
       for (const f of fields) {
         if (!validateField(f)) { firstInvalid = firstInvalid || f; }
       }
@@ -1277,7 +1232,7 @@
       
       payload.school = document.getElementById("school").value;
                 } else {
-      const fields = ['department', 'staffSchool', 'contactNumber'];
+      const fields = ['staffSchool', 'contactNumber'];
       for (const f of fields) {
         if (!validateField(f)) { firstInvalid = firstInvalid || f; }
       }
@@ -1287,7 +1242,7 @@
         showError("Please fix the highlighted fields above.");
         return;
       }
-      payload.department = document.getElementById("department").value;
+      
       payload.staff_school = document.getElementById("staffSchool").value;
       payload.contact_number = document.getElementById("contactNumber").value.trim();
     }
@@ -1417,16 +1372,7 @@
   function resetFormForNewRegistration() {
     const form = document.getElementById("volunteerForm");
     if (form) form.reset();
-    const courseSel = document.getElementById("course");
-    const branchSel = document.getElementById("branch");
-    if (courseSel) {
-      courseSel.innerHTML = '<option value="">-- Select School First --</option>';
-      courseSel.disabled = true;
-    }
-    if (branchSel) {
-      branchSel.innerHTML = '<option value="">-- Select Course First --</option>';
-      branchSel.disabled = true;
-    }
+
     const confCont = document.getElementById("confirmationContainer");
     const formCont = document.getElementById("formContainer");
     const dynCont = document.getElementById("dynamicFieldsContainer");
@@ -1449,11 +1395,20 @@
       });
     });
 
-    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    document.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+    const fieldsToClear = ['fullName', 'school', 'yearOfStudy', 'enrollmentNumber', 'staffSchool', 'contactNumber'];
+    fieldsToClear.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('is-invalid');
+        el.value = "";
+      }
+      fieldError(id, false);
+    });
 
-    setStep(1);
-    loadAvailability();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1487,10 +1442,7 @@
     });
 
     // Attach validation on blur/input
-    const fieldsToValidate = [
-      'fullName', 'school', 'course', 'branch', 'yearOfStudy', 'enrollmentNumber',
-      'department', 'staffSchool', 'contactNumber'
-    ];
+    const fieldsToValidate = ['fullName', 'school', 'yearOfStudy', 'enrollmentNumber', 'staffSchool', 'contactNumber'];
     fieldsToValidate.forEach(id => {
       const el = document.getElementById(id);
       if (el) {

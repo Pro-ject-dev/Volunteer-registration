@@ -156,12 +156,6 @@
    "label": "Staff Details"
   },
   {
-   "fieldname": "department",
-   "fieldtype": "Select",
-   "label": "Department",
-   "options": "\nDepartment of Computer Science and Engineering\nDepartment of Electronics and Communication Engineering\nDepartment of Electrical and Electronics Engineering\nDepartment of Mechanical Engineering\nDepartment of Civil Engineering\nDepartment of Mathematics\nDepartment of Sciences\nDepartment of English\nDepartment of Management\nDepartment of Administration\nDepartment of Student Affairs\nDepartment of Library\nDepartment of ICTS\nOther"
-  },
-  {
    "fieldname": "cb_staff",
    "fieldtype": "Column Break"
   },

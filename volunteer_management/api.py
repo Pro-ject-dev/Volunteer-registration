@@ -42,8 +42,7 @@ def get_availability():
 	options = {}
 	for fld_name in [
 		"year_of_study",
-		"department",
-	]:
+		]:
 		field = doc_meta.get_field(fld_name)
 		if field and field.options:
 			options[fld_name] = [opt.strip() for opt in field.options.split("\n") if opt.strip()]
@@ -98,7 +97,6 @@ def submit_registration(data=None):
 		"school",
 		"faculty_name",
 		"faculty_phone",
-		"department",
 		"staff_school",
 		"contact_number",
 	]
