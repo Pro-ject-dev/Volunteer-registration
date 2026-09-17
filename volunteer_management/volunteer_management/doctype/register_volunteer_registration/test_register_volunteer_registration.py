@@ -6,7 +6,7 @@ from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, now_datetime
 from volunteer_management.api import get_availability, submit_registration
 from volunteer_management.volunteer_management.doctype.register_volunteer_registration_settings.register_volunteer_registration_settings import (
-	RegisterRegisterVolunteerRegistrationSettings,
+	RegisterVolunteerRegistrationSettings,
 )
 
 
