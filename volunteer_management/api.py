@@ -37,15 +37,10 @@ def get_availability():
 		order_by="branch_name asc",
 	)
 
-	# Static/meta options for fields like year_of_study and department
-	doc_meta = frappe.get_meta("Register Volunteer Registration")
 	options = {}
-	for fld_name in [
-		"year_of_study",
-		]:
-		field = doc_meta.get_field(fld_name)
-		if field and field.options:
-			options[fld_name] = [opt.strip() for opt in field.options.split("\n") if opt.strip()]
+	# Fetch year of study options from Register Study Year master doctype
+	years = frappe.get_all("Register Study Year", fields=["name", "year_name"], order_by="creation asc")
+	options["year_of_study"] = [y.year_name or y.name for y in years]
 
 	# Map schools to master_options for backward compatibility
 	options["school"] = [s.get("school_name") or s.get("name") for s in schools]
@@ -92,8 +87,6 @@ def submit_registration(data=None):
 		"gender",
 		"enrollment_number",
 		"year_of_study",
-		"course",
-		"branch",
 		"school",
 		"faculty_name",
 		"faculty_phone",

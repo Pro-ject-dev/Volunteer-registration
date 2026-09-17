@@ -123,9 +123,9 @@
   },
   {
    "fieldname": "year_of_study",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Year of Study",
-   "options": "\n2nd Year\n3rd Year\n4th Year\n5th Year\nPostgraduate\nPhD / Research\nOther"
+   "options": "Register Study Year"
   },
   {
    "fieldname": "cb_student",
