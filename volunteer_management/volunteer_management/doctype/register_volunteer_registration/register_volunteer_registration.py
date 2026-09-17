@@ -9,29 +9,6 @@ from frappe.utils import cint, get_datetime, now_datetime
 
 
 class RegisterVolunteerRegistration(Document):
-	def before_validate(self):
-		self.resolve_academic_links()
-
-	def resolve_academic_links(self):
-		if self.participant_category == "Student":
-			if self.course and self.school and not frappe.db.exists("Register Course", self.course):
-				matched_course = frappe.db.get_value(
-					"Register Course",
-					{"course_name": self.course, "school": self.school},
-					"name",
-				)
-				if matched_course:
-					self.course = matched_course
-
-			if self.branch and self.course and not frappe.db.exists("Register Branch", self.branch):
-				matched_branch = frappe.db.get_value(
-					"Register Branch",
-					{"branch_name": self.branch, "course": self.course},
-					"name",
-				)
-				if matched_branch:
-					self.branch = matched_branch
-
 	def validate(self):
 		self.set_participant_group()
 		self.validate_mandatory_fields()
