@@ -14,18 +14,18 @@ class RegisterVolunteerRegistration(Document):
 
 	def resolve_academic_links(self):
 		if self.participant_category == "Student":
-			if self.course and self.school and not frappe.db.exists("RegisterCourse", self.course):
+			if self.course and self.school and not frappe.db.exists("Register Course", self.course):
 				matched_course = frappe.db.get_value(
-					"RegisterCourse",
+					"Register Course",
 					{"course_name": self.course, "school": self.school},
 					"name",
 				)
 				if matched_course:
 					self.course = matched_course
 
-			if self.branch and self.course and not frappe.db.exists("RegisterBranch", self.branch):
+			if self.branch and self.course and not frappe.db.exists("Register Branch", self.branch):
 				matched_branch = frappe.db.get_value(
-					"RegisterBranch",
+					"Register Branch",
 					{"branch_name": self.branch, "course": self.course},
 					"name",
 				)
@@ -65,9 +65,9 @@ class RegisterVolunteerRegistration(Document):
 
 		if self.participant_category == "Student":
 			student_required = [
-				("school", _("RegisterSchool")),
-				("course", _("RegisterCourse")),
-				("branch", _("RegisterBranch")),
+				("school", _("Register School")),
+				("course", _("Register Course")),
+				("branch", _("Register Branch")),
 				("year_of_study", _("Year of Study")),
 				("enrollment_number", _("Enrollment Number")),
 			]
@@ -86,7 +86,7 @@ class RegisterVolunteerRegistration(Document):
 		elif self.participant_category == "Staff":
 			staff_required = [
 				("department", _("Department")),
-				("staff_school", _("RegisterSchool")),
+				("staff_school", _("Register School")),
 				("contact_number", _("Contact Number")),
 			]
 			for field, label in staff_required:
@@ -162,7 +162,7 @@ class RegisterVolunteerRegistration(Document):
 			if frappe.flags.in_test and frappe.flags.ignore_registration_window:
 				return
 
-			settings = frappe.get_single("Register Register Volunteer Registration Settings")
+			settings = frappe.get_single("Register Volunteer Registration Settings")
 			if not settings.registration_open:
 				frappe.throw(_("Volunteer registration is currently closed by the administrator."))
 

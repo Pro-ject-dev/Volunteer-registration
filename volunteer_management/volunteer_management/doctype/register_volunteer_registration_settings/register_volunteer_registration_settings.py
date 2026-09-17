@@ -20,7 +20,7 @@ class RegisterVolunteerRegistrationSettings(Document):
 		No capacity capping or restrictions are enforced.
 		Includes dynamic academic hierarchy for server-side template rendering.
 		"""
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 
 		counts = {}
 		group_counts = frappe.db.sql(
@@ -70,19 +70,19 @@ class RegisterVolunteerRegistrationSettings(Document):
 
 		# Fetch dynamic academic hierarchy
 		schools = frappe.get_all(
-			"RegisterSchool",
+			"Register School",
 			filters={"disabled": 0},
 			fields=["name", "school_name"],
 			order_by="school_name asc",
 		)
 		courses = frappe.get_all(
-			"RegisterCourse",
+			"Register Course",
 			filters={"disabled": 0},
 			fields=["name", "course_name", "school"],
 			order_by="course_name asc",
 		)
 		branches = frappe.get_all(
-			"RegisterBranch",
+			"Register Branch",
 			filters={"disabled": 0},
 			fields=["name", "branch_name", "course", "school"],
 			order_by="branch_name asc",

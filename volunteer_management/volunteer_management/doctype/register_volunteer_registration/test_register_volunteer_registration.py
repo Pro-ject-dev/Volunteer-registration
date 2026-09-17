@@ -20,7 +20,7 @@ class TestRegisterVolunteerRegistration(IntegrationTestCase):
 		seed()
 
 		# Reset settings to default
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 		settings.event_name = "Amma's Birthday"
 		settings.campus = "Coimbatore Campus"
 		settings.registration_open = 1
@@ -292,7 +292,7 @@ class TestRegisterVolunteerRegistration(IntegrationTestCase):
 		doc1.save()
 		self.assertEqual(doc1.status, "Cancelled")
 	def test_12_registration_before_opening_time(self):
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 		settings.opening_date_time = add_days(now_datetime(), 1)  # Tomorrow
 		settings.save()
 
@@ -312,7 +312,7 @@ class TestRegisterVolunteerRegistration(IntegrationTestCase):
 		self.assertRaises(frappe.ValidationError, doc.insert)
 
 	def test_13_registration_after_closing_time(self):
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 		settings.closing_date_time = add_days(now_datetime(), -1)  # Yesterday
 		settings.save()
 
@@ -332,7 +332,7 @@ class TestRegisterVolunteerRegistration(IntegrationTestCase):
 		self.assertRaises(frappe.ValidationError, doc.insert)
 
 	def test_14_manual_registration_shutdown(self):
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 		settings.registration_open = 0
 		settings.save()
 
@@ -369,7 +369,7 @@ class TestRegisterVolunteerRegistration(IntegrationTestCase):
 			}).insert()
 			self.assertEqual(doc.status, "Confirmed")
 	def test_16_total_capacity_calculation(self):
-		settings = frappe.get_single("Register Register Volunteer Registration Settings")
+		settings = frappe.get_single("Register Volunteer Registration Settings")
 		settings.female_student_capacity = 216
 		settings.male_student_capacity = 216
 		settings.female_staff_capacity = 22
