@@ -43,8 +43,6 @@ class RegisterVolunteerRegistration(Document):
 		if self.participant_category == "Student":
 			student_required = [
 				("school", _("Register School")),
-				("course", _("Register Course")),
-				("branch", _("Register Branch")),
 				("year_of_study", _("Year of Study")),
 				("enrollment_number", _("Enrollment Number")),
 			]
@@ -62,7 +60,6 @@ class RegisterVolunteerRegistration(Document):
 
 		elif self.participant_category == "Staff":
 			staff_required = [
-				("department", _("Department")),
 				("staff_school", _("Register School")),
 				("contact_number", _("Contact Number")),
 			]

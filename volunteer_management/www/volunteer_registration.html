@@ -620,8 +620,8 @@
         </div>
         <h1 class="font-extrabold text-white leading-tight m-0 tracking-tight"
           style="font-size: clamp(1.35rem, 4.5vw, 2.1rem);">
-          Amma's Birthday<br>
-          <em class="not-italic" style="color: #f0c060;">Celebrations 2026</em>
+          Vishwa Seva Dinam<br>
+          <em class="not-italic" style="color: #f0c060;">2026</em>
         </h1>
         <p class="m-0 leading-relaxed text-xs sm:text-sm" style="color: rgba(255,255,255,0.80); max-width: 480px;">
           Embrace the spirit of selfless service. Join us as a volunteer for Amma's Birthday Celebrations.
@@ -809,9 +809,9 @@
               <div class="field-error" id="err-school">Please select your school.</div>
             </div>
 
-            
 
-            
+
+
 
             <div>
               <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);"
@@ -847,7 +847,7 @@
               <div class="field-error" id="err-staffSchool">Please select your school.</div>
             </div>
 
-            
+
 
             <div class="sm:col-span-2">
               <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);"
@@ -1193,7 +1193,7 @@
       if (current) el.value = current;
     };
     populate("yearOfStudy", options.year_of_study);
-    
+
   }
 
   function getSelectedGroup() {
@@ -1318,8 +1318,8 @@
       }
       payload.enrollment_number = document.getElementById("enrollmentNumber").value.trim();
       payload.year_of_study = document.getElementById("yearOfStudy").value;
-      
-      
+
+
       payload.school = document.getElementById("school").value;
     } else {
       const fields = ['staffSchool', 'contactNumber'];
@@ -1332,7 +1332,7 @@
         showError("Please fix the highlighted fields above.");
         return;
       }
-      
+
       payload.staff_school = document.getElementById("staffSchool").value;
       payload.contact_number = document.getElementById("contactNumber").value.trim();
     }
