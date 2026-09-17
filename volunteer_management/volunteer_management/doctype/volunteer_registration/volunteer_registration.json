@@ -125,7 +125,7 @@
    "fieldname": "year_of_study",
    "fieldtype": "Select",
    "label": "Year of Study",
-   "options": "\n1st Year\n2nd Year\n3rd Year\n4th Year\n5th Year\nPostgraduate\nPhD / Research\nOther"
+   "options": "\n2nd Year\n3rd Year\n4th Year\n5th Year\nPostgraduate\nPhD / Research\nOther"
   },
   {
    "fieldname": "course",
