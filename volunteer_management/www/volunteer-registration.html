@@ -729,25 +729,9 @@
               <div class="field-error" id="err-school">Please select your school.</div>
             </div>
 
-            <div>
-              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="course">
-                Course <span style="color: var(--saffron);">*</span>
-              </label>
-              <select class="form-select" id="course" name="course" disabled>
-                <option value="">-- Select School First --</option>
-              </select>
-              <div class="field-error" id="err-course">Please select your course.</div>
-            </div>
+            
 
-            <div>
-              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="branch">
-                Branch <span style="color: var(--saffron);">*</span>
-              </label>
-              <select class="form-select" id="branch" name="branch" disabled>
-                <option value="">-- Select Course First --</option>
-              </select>
-              <div class="field-error" id="err-branch">Please select your branch.</div>
-            </div>
+            
 
             <div>
               <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="yearOfStudy">
@@ -1065,15 +1049,15 @@
     }
 
     const schoolSelect = document.getElementById("school");
-    const courseSelect = document.getElementById("course");
-    const branchSelect = document.getElementById("branch");
+    
+    
     const staffSchoolSelect = document.getElementById("staffSchool");
 
-    if (!schoolSelect || !courseSelect || !branchSelect) return;
+    if (!schoolSelect) return;
 
     const currentSchool = schoolSelect.value;
-    const currentCourse = courseSelect.value;
-    const currentBranch = branchSelect.value;
+    
+    
     const currentStaffSchool = staffSchoolSelect ? staffSchoolSelect.value : "";
 
     // 1. Populate School options
@@ -1109,35 +1093,7 @@
     }
 
     // Helper function: Update courses for selected school
-    function populateCoursesForSchool(selectedSchool, targetCourseValue = "") {
-      courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
-      branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
-      branchSelect.disabled = true;
-
-      if (!selectedSchool) {
-        courseSelect.disabled = true;
-        courseSelect.innerHTML = '<option value="">-- Select School First --</option>';
-        return;
-      }
-
-      const matchingCourses = (academicData.courses || []).filter(c => c.school === selectedSchool);
-      if (matchingCourses.length === 0) {
-        courseSelect.innerHTML = '<option value="">No courses available</option>';
-        courseSelect.disabled = true;
-        return;
-      }
-
-      const seenCourses = new Set();
-      matchingCourses.forEach(c => {
-        const cName = c.course_name || c.name;
-        if (!seenCourses.has(cName)) {
-          seenCourses.add(cName);
-          const opt = document.createElement("option");
-          opt.value = cName;
-          opt.textContent = cName;
-          courseSelect.appendChild(opt);
-        }
-      });
+    );
       courseSelect.disabled = false;
       if (targetCourseValue && seenCourses.has(targetCourseValue)) {
         courseSelect.value = targetCourseValue;
@@ -1145,44 +1101,7 @@
     }
 
     // Helper function: Update branches for selected course & school
-    function populateBranchesForCourse(selectedCourseName, selectedSchool, targetBranchValue = "") {
-      branchSelect.innerHTML = '<option value="">-- Select Branch --</option>';
-
-      if (!selectedCourseName) {
-        branchSelect.disabled = true;
-        branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
-        return;
-      }
-
-      const matchingBranches = (academicData.branches || []).filter(b => {
-        const matchesSchool = !b.school || b.school === selectedSchool;
-        const matchesCourse = b.course === selectedCourseName ||
-          b.course.startsWith(selectedCourseName + ' -') ||
-          (b.branch_name && b.course && b.course.includes(selectedCourseName));
-        return matchesSchool && matchesCourse;
-      });
-
-      if (matchingBranches.length === 0) {
-        const opt = document.createElement("option");
-        opt.value = "General";
-        opt.textContent = "General";
-        branchSelect.appendChild(opt);
-        branchSelect.disabled = false;
-        if (targetBranchValue === "General") branchSelect.value = "General";
-        return;
-      }
-
-      const seenBranches = new Set();
-      matchingBranches.forEach(b => {
-        const bName = b.branch_name || b.name;
-        if (!seenBranches.has(bName)) {
-          seenBranches.add(bName);
-          const opt = document.createElement("option");
-          opt.value = bName;
-          opt.textContent = bName;
-          branchSelect.appendChild(opt);
-        }
-      });
+    );
       branchSelect.disabled = false;
       if (targetBranchValue && seenBranches.has(targetBranchValue)) {
         branchSelect.value = targetBranchValue;
@@ -1192,24 +1111,20 @@
     // Attach change listeners
     schoolSelect.onchange = function () {
       fieldError('school', false);
-      populateCoursesForSchool(this.value);
-    };
+          };
 
     courseSelect.onchange = function () {
-      fieldError('course', false);
-      populateBranchesForCourse(this.value, schoolSelect.value);
-    };
+      
+          };
 
     branchSelect.onchange = function () {
-      fieldError('branch', false);
+      
     };
 
     // Sync initial state if school is selected
     if (schoolSelect.value) {
-      populateCoursesForSchool(schoolSelect.value, currentCourse);
-      if (courseSelect.value) {
-        populateBranchesForCourse(courseSelect.value, schoolSelect.value, currentBranch);
-      }
+            if (courseSelect.value) {
+              }
     } else {
       courseSelect.disabled = true;
       courseSelect.innerHTML = '<option value="">-- Select School First --</option>';
@@ -1358,8 +1273,8 @@
       }
       payload.enrollment_number = document.getElementById("enrollmentNumber").value.trim();
       payload.year_of_study = document.getElementById("yearOfStudy").value;
-      payload.course = document.getElementById("course").value;
-      payload.branch = document.getElementById("branch").value;
+      
+      
       payload.school = document.getElementById("school").value;
                 } else {
       const fields = ['department', 'staffSchool', 'contactNumber'];

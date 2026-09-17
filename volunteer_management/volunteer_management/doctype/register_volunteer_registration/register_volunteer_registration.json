@@ -128,18 +128,6 @@
    "options": "\n2nd Year\n3rd Year\n4th Year\n5th Year\nPostgraduate\nPhD / Research\nOther"
   },
   {
-   "fieldname": "course",
-   "fieldtype": "Link",
-   "label": "Course",
-   "options": "Register Course"
-  },
-  {
-   "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Register Branch"
-  },
-  {
    "fieldname": "cb_student",
    "fieldtype": "Column Break"
   },
