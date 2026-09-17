@@ -1,0 +1,1613 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+
+{{- "" -}}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          maroon: { DEFAULT: '#7b1230', dark: '#57001e', light: '#a8264a' },
+          saffron: { DEFAULT: '#d4640a', light: '#f08030' },
+          gold: { DEFAULT: '#c9972a', light: '#f0c060' },
+          cream: { DEFAULT: '#fdf8f2', dark: '#f5ede0' },
+        },
+        fontFamily: { sans: ['Segoe UI', 'system-ui', '-apple-system', 'sans-serif'] },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root {
+    --maroon: #7b1230;
+    --maroon-dark: #57001e;
+    --maroon-light: #a8264a;
+    --saffron: #d4640a;
+    --saffron-light: #f08030;
+    --gold: #c9972a;
+    --gold-light: #f0c060;
+    --cream: #fdf8f2;
+    --cream-dark: #f5ede0;
+    --text-dark: #2c1a0e;
+    --text-mid: #5a3e2b;
+    --text-light: #8c725d;
+    --green-ok: #1a7a4a;
+    --green-bg: #e8f5ed;
+    --red-full: #9b1c1c;
+    --red-bg: #fef2f2;
+    --warn-orange: #b45309;
+    --warn-bg: #fffbeb;
+    --ring: 0 0 0 3px rgba(123, 18, 48, 0.18);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--cream);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  /* ── Accessibility & Frappe resets ── */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 999;
+    background: var(--maroon);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 0 0 8px 0;
+    font-weight: 700;
+  }
+  .skip-link:focus { left: 0; }
+
+  *:focus-visible {
+    outline: 2px solid var(--maroon);
+    outline-offset: 2px;
+  }
+
+  nav.navbar, header.navbar, footer, .web-footer, footer.web-footer {
+    display: none !important;
+  }
+  body, .page-wrapper, .page-content-wrapper {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* ── Radio buttons ── */
+  input[name="participant_category"],
+  input[name="gender"] {
+    position: absolute !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* ── Live Pulse ── */
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-ok);
+    display: inline-block;
+    animation: pulseDot 1.8s ease-in-out infinite;
+    box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.18);
+  }
+
+  /* ── Hero section animations ── */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .hero-stripe {
+    background: linear-gradient(90deg, #c9972a 0%, #f0c060 25%, #c9972a 50%, #f08030 75%, #c9972a 100%);
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
+  }
+
+  /* ── Alerts ── */
+  .vr-window-alert {
+    display: none;
+    background: var(--warn-bg);
+    border: 1.5px solid #fbbf24;
+    border-left: 5px solid var(--saffron);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--warn-orange);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .vr-cat-alert {
+    display: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+  .vr-cat-alert.state-open {
+    background: var(--green-bg);
+    border: 1.5px solid rgba(26, 122, 74, 0.20);
+    color: var(--green-ok);
+  }
+
+  .vr-error-alert {
+    display: none;
+    background: var(--red-bg);
+    border: 1.5px solid rgba(155, 28, 28, 0.25);
+    border-left: 4px solid var(--red-full);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--red-full);
+    font-size: 0.88rem;
+    margin-top: 16px;
+  }
+
+  /* ── Form inputs & Selects - 16px prevents iOS Safari auto-zoom ── */
+  .form-control,
+  .form-select {
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    border: 1.5px solid rgba(123, 18, 48, 0.18) !important;
+    border-radius: 10px !important;
+    font-size: 16px !important; /* Prevents auto-zoom on mobile iOS */
+    padding: 0 14px !important;
+    line-height: 46px !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    background-color: #fff !important;
+    color: var(--text-dark) !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    font-family: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b1230'%3e%3cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.85rem center !important;
+    background-size: 1.25em 1.25em !important;
+    padding-right: 2.5rem !important;
+    cursor: pointer;
+  }
+
+  .form-select:disabled {
+    background-color: #f8f6f4 !important;
+    color: var(--text-light) !important;
+    cursor: not-allowed;
+    opacity: 0.85;
+  }
+
+  .form-control::placeholder {
+    color: #a89485;
+    font-size: 0.9rem;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--maroon) !important;
+    box-shadow: var(--ring) !important;
+    outline: none !important;
+  }
+
+  .form-control.is-invalid,
+  .form-select.is-invalid {
+    border-color: var(--red-full) !important;
+    background: #fff8f8 !important;
+  }
+
+  .field-error {
+    display: none;
+    color: var(--red-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .field-error.show {
+    display: block;
+    animation: shake 0.35s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* ── Responsive Selection Cards ── */
+  .selection-card {
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(123, 18, 48, 0.18) !important;
+    background: #fff;
+    color: var(--text-mid);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .selection-card:active {
+    transform: scale(0.98);
+  }
+
+  .selection-card .card-icon-box {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(123,18,48,0.06);
+    color: var(--maroon);
+    transition: all 0.2s ease;
+  }
+
+  .selection-card .card-icon-box svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .selection-card .card-text {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .selection-card .card-title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .selection-card .card-sub {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 420px) {
+    .selection-card {
+      padding: 6px 8px !important;
+      gap: 7px !important;
+      height: 52px !important;
+      min-height: 52px !important;
+    }
+    .selection-card .card-icon-box {
+      width: 28px !important;
+      height: 28px !important;
+    }
+    .selection-card .card-icon-box svg {
+      width: 15px !important;
+      height: 15px !important;
+    }
+    .selection-card .card-title {
+      font-size: 0.85rem !important;
+    }
+    .selection-card .card-sub {
+      font-size: 0.65rem !important;
+    }
+  }
+
+  /* ── Step indicator ── */
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    border: 2px solid rgba(123, 18, 48, 0.25);
+    color: var(--text-light);
+    background: #fff;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .step-dot.active {
+    background: var(--maroon);
+    color: #fff;
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123, 18, 48, 0.15);
+  }
+
+  .step-dot.done {
+    background: var(--green-ok);
+    color: #fff;
+    border-color: var(--green-ok);
+  }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(123, 18, 48, 0.15);
+    transition: background 0.3s;
+    min-width: 12px;
+  }
+
+  .step-line.done {
+    background: var(--green-ok);
+  }
+
+  /* ── Spinner & Dynamic animations ── */
+  .spinner-border-sm {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 0.15em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: vrSpin 0.65s linear infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes vrSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  #dynamicFieldsContainer {
+    animation: vrFadeSlide 0.35s ease;
+  }
+
+  @keyframes vrFadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .vr-confirm-checkmark {
+    animation: vrPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes vrPopIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── Toast notification ── */
+  .toast {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    margin: 0 auto;
+    z-index: 9999;
+    background: #fff;
+    border-left: 5px solid var(--red-full);
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    max-width: 400px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--red-full);
+    transform: translateY(-80px);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .toast.show {
+    transform: translateY(0);
+  }
+
+  .toast.toast-success {
+    border-left-color: var(--green-ok);
+    color: var(--green-ok);
+  }
+
+  /* ── Confetti ── */
+  @keyframes confettiFall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 14px;
+    top: -20px;
+    animation: confettiFall 3.2s ease-in forwards;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Copy button ── */
+  .copy-btn {
+    background: rgba(123, 18, 48, 0.08);
+    border: 1px solid rgba(123, 18, 48, 0.18);
+    color: var(--maroon);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .copy-btn.copied {
+    background: var(--green-ok);
+    color: #fff;
+    border-color: var(--green-ok);
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<!-- Accessibility skip link -->
+<a href="#formContainer" class="skip-link">Skip to registration form</a>
+
+<!-- Decorative background -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+  <div class="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full"
+    style="background: radial-gradient(circle, rgba(123,18,48,0.07) 0%, transparent 70%);"></div>
+  <div class="absolute -bottom-20 -left-28 w-[380px] h-[380px] rounded-full"
+    style="background: radial-gradient(circle, rgba(201,151,42,0.08) 0%, transparent 70%);"></div>
+</div>
+
+<main id="mainContent" class="relative z-10 w-full max-w-4xl mx-auto px-3.5 sm:px-6 md:px-8 py-3.5 sm:py-6 pb-12">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="flex items-center justify-between gap-3 pb-3 mb-4 sm:mb-6" style="border-bottom: 1px solid rgba(123,18,48,0.15);">
+    <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+      <img src="https://webfiles.amrita.edu/2024/06/branding-square.svg" alt="Amrita Vishwa Vidyapeetham"
+        class="h-10 sm:h-12 w-auto flex-shrink-0 object-contain" id="amritaLogoImg"
+        onerror="this.style.display='none'; document.getElementById('amritaLogoFallback').style.display='flex';">
+      <div id="amritaLogoFallback"
+        class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex-shrink-0 items-center justify-center font-extrabold text-lg sm:text-xl"
+        style="background: var(--maroon); color: var(--gold-light); display: none;">A</div>
+      <div class="min-w-0">
+        <div class="font-bold tracking-wide leading-tight text-xs sm:text-sm truncate" style="color: var(--maroon);">
+          AMRITA VISHWA VIDYAPEETHAM
+        </div>
+        <div class="font-medium text-xs truncate" style="color: var(--text-light);">Coimbatore Campus</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="hidden xs:flex sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+        style="background: rgba(26,122,74,0.10); color: var(--green-ok);">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Live</span>
+      </div>
+      <button type="button" id="refreshBtn" onclick="loadAvailability(true)"
+        class="flex items-center gap-1.5 rounded-full transition-all" style="background: rgba(123,18,48,0.08); border: 1px solid rgba(123,18,48,0.18);
+               color: var(--maroon); font-size: 0.75rem; font-weight: 700;
+               padding: 5px 11px; cursor: pointer;" aria-label="Refresh availability">
+        <svg id="refreshIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span class="hidden sm:inline">Refresh</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════ HERO BANNER ═══════ -->
+  <section class="rounded-2xl mb-4 sm:mb-6 overflow-hidden relative" style="background: linear-gradient(135deg, #7b1230 0%, #57001e 55%, #3a0012 100%);
+                    box-shadow: 0 6px 28px rgba(87,0,30,0.25);">
+    <div class="hero-stripe absolute top-0 left-0 right-0 h-1 z-10" aria-hidden="true"></div>
+
+    <div class="flex flex-col-reverse sm:grid sm:grid-cols-[1fr_180px] md:grid-cols-[1fr_220px]" id="heroInner">
+      <div class="flex flex-col justify-center gap-2 sm:gap-3 p-5 sm:p-7 md:p-8">
+        <div class="inline-flex items-center font-bold uppercase tracking-wider w-fit px-3 py-1 rounded-full text-xs" style="background: rgba(201,151,42,0.18); border: 1px solid rgba(201,151,42,0.35);
+                      color: #f0c060; letter-spacing: 0.06em;">
+          Volunteer Registration
+        </div>
+        <h1 class="font-extrabold text-white leading-tight m-0 tracking-tight"
+          style="font-size: clamp(1.35rem, 4.5vw, 2.1rem);">
+          Amma's Birthday<br>
+          <em class="not-italic" style="color: #f0c060;">Celebrations 2026</em>
+        </h1>
+        <p class="m-0 leading-relaxed text-xs sm:text-sm" style="color: rgba(255,255,255,0.80); max-width: 480px;">
+          Embrace the spirit of selfless service. Join us as a volunteer for Amma's Birthday Celebrations.
+        </p>
+        <div class="inline-flex items-center gap-1.5 rounded-full font-semibold w-fit mt-0.5 text-xs" style="background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9);
+                      padding: 4px 10px;">
+          <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+              clip-rule="evenodd" />
+          </svg>
+          Coimbatore Campus
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center p-4 sm:p-5 relative overflow-hidden"
+        style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="relative z-10 rounded-full overflow-hidden flex-shrink-0" style="width: 110px; height: 110px; border: 3px solid var(--gold);
+                      box-shadow: 0 0 0 6px rgba(201,151,42,0.18), 0 6px 20px rgba(0,0,0,0.35);
+                      background: var(--maroon-dark);">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTapDVUQIIRlgm6LUigSRoBucpKs08u7-R8w71yr0A0OTDcSMC0Ea4_Ibo&s=10"
+            alt="Amma – Mata Amritanandamayi Devi" class="w-full h-full object-cover block"
+            onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:3rem;\'>🙏</div>';">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="windowAlert" class="vr-window-alert" role="alert">
+    <span id="windowAlertText"></span>
+  </div>
+
+  <!-- ═══════ REGISTRATION FORM CONTAINER ═══════ -->
+  <section class="rounded-2xl mb-6 p-4 sm:p-7 md:p-8" id="formContainer" style="background: #fff; border: 1.5px solid rgba(123,18,48,0.10);
+                    box-shadow: 0 4px 24px rgba(123,18,48,0.08);">
+
+    <!-- Step indicator -->
+    <div class="flex items-center gap-2 mb-4 sm:mb-6" aria-label="Progress">
+      <div class="step-dot active" id="stepDot1">1</div>
+      <div class="step-line" id="stepLine1"></div>
+      <div class="step-dot" id="stepDot2">2</div>
+      <div class="step-line" id="stepLine2"></div>
+      <div class="step-dot" id="stepDot3">3</div>
+    </div>
+
+    <h2 class="font-extrabold mb-1 text-lg sm:text-xl" style="color: var(--maroon-dark);">
+      Volunteer Registration
+    </h2>
+    <p class="mb-4 sm:mb-6 text-xs sm:text-sm" style="color: var(--text-light);">
+      Fill in your details carefully. All fields marked
+      <span style="color: var(--saffron); font-weight: 700;" aria-label="required">*</span> are mandatory.
+    </p>
+
+    <form id="volunteerForm" novalidate>
+
+      <!-- STEP 1: PARTICIPANT CLASSIFICATION -->
+      <div id="step1Section">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <span class="block w-1 h-4 rounded-sm flex-shrink-0"
+            style="background: linear-gradient(180deg, var(--saffron), var(--gold));" aria-hidden="true"></span>
+          <span class="font-bold uppercase tracking-wider text-xs sm:text-sm" style="color: var(--maroon);">
+            Step 1 · Participant Classification
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5 mb-2">
+          <!-- Participant Category -->
+          <div>
+            <label class="block font-bold tracking-wide mb-1.5 text-xs" style="color: var(--text-mid);">
+              Participant Category <span style="color: var(--saffron);">*</span>
+            </label>
+            <div class="flex gap-2.5" role="radiogroup" aria-label="Participant Category">
+              <input type="radio" name="participant_category" id="catStudent" value="Student" autocomplete="off">
+              <label for="catStudent" id="lbl-catStudent" class="selection-card">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                  </svg>
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Student</div>
+                  <div class="card-sub">UG / PG / PhD</div>
+                </div>
+              </label>
+
+              <input type="radio" name="participant_category" id="catStaff" value="Staff" autocomplete="off">
+              <label for="catStaff" id="lbl-catStaff" class="selection-card">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                    <circle cx="12" cy="13" r="2" />
+                    <path d="M8 21v-1a4 4 0 018 0v1" />
+                  </svg>
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Staff</div>
+                  <div class="card-sub">Faculty / Admin</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label class="block font-bold tracking-wide mb-1.5 text-xs" style="color: var(--text-mid);">
+              Gender <span style="color: var(--saffron);">*</span>
+            </label>
+            <div class="flex gap-2.5" role="radiogroup" aria-label="Gender">
+              <input type="radio" name="gender" id="genderFemale" value="Female" autocomplete="off">
+              <label for="genderFemale" id="lbl-genderFemale" class="selection-card">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="9" r="5" />
+                    <path d="M12 14v7" />
+                    <path d="M9 18h6" />
+                  </svg>
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Female</div>
+                  <div class="card-sub">Volunteer</div>
+                </div>
+              </label>
+
+              <input type="radio" name="gender" id="genderMale" value="Male" autocomplete="off">
+              <label for="genderMale" id="lbl-genderMale" class="selection-card">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="14" r="5" />
+                    <path d="M19 5l-5.4 5.4" />
+                    <path d="M19 5h-5" />
+                    <path d="M19 5v5" />
+                  </svg>
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Male</div>
+                  <div class="card-sub">Volunteer</div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div id="categoryAlert" class="vr-cat-alert" role="status"></div>
+      </div>
+
+      <!-- STEP 2: VOLUNTEER INFORMATION -->
+      <div id="dynamicFieldsContainer" style="display: none;">
+        <hr class="border-0 my-4 sm:my-6"
+          style="height: 1.5px; background: linear-gradient(90deg, rgba(123,18,48,0.15), transparent);">
+
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <span class="block w-1 h-4 rounded-sm flex-shrink-0"
+            style="background: linear-gradient(180deg, var(--saffron), var(--gold));" aria-hidden="true"></span>
+          <span class="font-bold uppercase tracking-wider text-xs sm:text-sm" style="color: var(--maroon);">
+            Step 2 · Volunteer Information
+          </span>
+        </div>
+
+        <div class="mb-3.5">
+          <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="fullName">
+            Full Name <span style="color: var(--saffron);">*</span>
+          </label>
+          <input type="text" class="form-control" id="fullName" name="full_name"
+            placeholder="Enter your full name as per records" autocomplete="name" required>
+          <div class="field-error" id="err-fullName">Please enter your full name.</div>
+        </div>
+
+        <!-- Student Fields -->
+        <div id="studentFields" style="display: none;">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+            <div class="sm:col-span-2">
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="school">
+                School <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="school" name="school">
+                <option value="">-- Select School --</option>
+              </select>
+              <div class="field-error" id="err-school">Please select your school.</div>
+            </div>
+
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="course">
+                Course <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="course" name="course" disabled>
+                <option value="">-- Select School First --</option>
+              </select>
+              <div class="field-error" id="err-course">Please select your course.</div>
+            </div>
+
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="branch">
+                Branch <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="branch" name="branch" disabled>
+                <option value="">-- Select Course First --</option>
+              </select>
+              <div class="field-error" id="err-branch">Please select your branch.</div>
+            </div>
+
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="yearOfStudy">
+                Year of Study <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="yearOfStudy" name="year_of_study"></select>
+              <div class="field-error" id="err-yearOfStudy">Please select your year of study.</div>
+            </div>
+
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="enrollmentNumber">
+                Roll Number <span style="color: var(--saffron);">*</span>
+              </label>
+              <input type="text" class="form-control" id="enrollmentNumber" name="enrollment_number"
+                placeholder="e.g. CB.EN.U4CSE21001" style="text-transform: uppercase;" autocomplete="off"
+                spellcheck="false">
+              <div class="field-error" id="err-enrollmentNumber">Roll Number is required.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Fields -->
+        <div id="staffFields" style="display: none;">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="staffSchool">
+                School <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="staffSchool" name="staff_school"></select>
+              <div class="field-error" id="err-staffSchool">Please select your school.</div>
+            </div>
+
+            <div>
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="department">
+                Department <span style="color: var(--saffron);">*</span>
+              </label>
+              <select class="form-select" id="department" name="department"></select>
+              <div class="field-error" id="err-department">Please select your department.</div>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="contactNumber">
+                Contact Number <span style="color: var(--saffron);">*</span>
+              </label>
+              <input type="tel" class="form-control" id="contactNumber" name="contact_number"
+                placeholder="10-digit mobile number" maxlength="15" inputmode="tel" autocomplete="tel">
+              <div class="field-error" id="err-contactNumber">Please enter a valid 10-digit mobile number.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="submitErrorAlert" class="vr-error-alert" role="alert"></div>
+
+        <button type="submit" id="btnSubmit"
+          class="w-full mt-5 sm:mt-6 flex items-center justify-center gap-2 font-bold rounded-xl" style="height: 50px; font-size: 1rem; letter-spacing: 0.02em;
+                       background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+                       color: #fff; border: none; cursor: pointer;
+                       box-shadow: 0 4px 18px rgba(123,18,48,0.28);
+                       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
+          <span id="btnSubmitSpinner" class="spinner-border-sm" style="display: none;" aria-hidden="true"></span>
+          <span id="btnSubmitText">Register as Volunteer</span>
+          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- ═══════ STEP 3: CONFIRMATION SCREEN ═══════ -->
+  <section id="confirmationContainer" style="display: none;">
+    <div class="rounded-2xl p-6 sm:p-8 md:p-10 text-center" style="background: #fff; border: 1.5px solid rgba(123,18,48,0.12);
+                  box-shadow: 0 8px 36px rgba(123,18,48,0.10);">
+      <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full mb-4 sm:mb-6 vr-confirm-checkmark"
+        style="background: var(--green-bg); color: var(--green-ok); border: 2px solid rgba(26,122,74,0.25);">
+        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <h2 class="font-extrabold text-xl sm:text-2xl mb-1.5" style="color: var(--maroon-dark);">
+        Registration Confirmed!
+      </h2>
+      <p class="mb-5 sm:mb-6 text-xs sm:text-sm" style="color: var(--text-light);">
+        Thank you for offering your selfless service for Amma's Birthday Celebrations.
+      </p>
+
+      <div class="rounded-xl p-4 sm:p-5 mb-5 sm:mb-6 text-left max-w-lg mx-auto"
+        style="background: var(--cream); border: 1.5px solid rgba(123,18,48,0.12);">
+        <div class="flex items-center justify-between pb-2.5 mb-2.5" style="border-bottom: 1px solid rgba(123,18,48,0.10);">
+          <span class="text-xs uppercase font-bold tracking-wider" style="color: var(--text-light);">Registration ID</span>
+          <div class="flex items-center gap-2">
+            <span class="font-mono font-extrabold text-sm sm:text-base" id="confRegId" style="color: var(--maroon);"></span>
+            <button type="button" id="copyBtn" onclick="copyRegId()" class="copy-btn">
+              <span>Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="flex justify-between">
+            <span style="color: var(--text-light);">Full Name:</span>
+            <span class="font-bold text-right" id="confName" style="color: var(--text-dark);"></span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--text-light);">Category:</span>
+            <span class="font-bold text-right" id="confCategory" style="color: var(--text-dark);"></span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--text-light);">Group:</span>
+            <span class="font-bold text-right" id="confGroup" style="color: var(--text-dark);"></span>
+          </div>
+          <div class="flex justify-between" id="confEnrollRow">
+            <span style="color: var(--text-light);">Roll Number:</span>
+            <span class="font-mono font-bold text-right" id="confEnroll" style="color: var(--text-dark);"></span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--text-light);">Date & Time:</span>
+            <span class="font-bold text-right" id="confDateTime" style="color: var(--text-dark);"></span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" onclick="resetFormForNewRegistration()" class="font-bold rounded-xl px-6 py-2.5 sm:py-3 text-xs sm:text-sm" style="background: rgba(123,18,48,0.08); border: 1.5px solid rgba(123,18,48,0.20);
+                     color: var(--maroon); cursor: pointer; transition: all 0.15s;">
+        Register Another Volunteer
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="text-center pt-4 pb-2" style="border-top: 1px solid rgba(123,18,48,0.10); margin-top: 8px;">
+    <div class="font-bold text-xs uppercase tracking-wider mb-0.5" style="color: var(--maroon); letter-spacing: 0.06em;">
+      Amrita Vishwa Vidyapeetham
+    </div>
+    <div class="text-xs" style="color: var(--text-light); font-size: 0.72rem;">
+      Volunteer Management Portal · Mata Amritanandamayi Math
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  /* ══════════════════════════════════════════════════════════
+     GLOBAL STATE & CONSTANTS
+  ══════════════════════════════════════════════════════════ */
+  const phoneRegex = /^[6-9]\d{9}$/;
+  let liveData = {{ stats | tojson | safe if stats else 'null' }};
+  let academicData = {{ stats.academic | tojson | safe if (stats and stats.academic) else '{"schools":[],"courses":[],"branches":[]}' }};
+
+  /* ══════════════════════════════════════════════════════════
+     UI HELPERS & DASHBOARD CARDS
+  ══════════════════════════════════════════════════════════ */
+
+  function animateCount(el, from, to, duration = 600) {
+    if (!el) return;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(from + (to - from) * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function showToast(msg, type = 'error') {
+    const t = document.createElement('div');
+    t.className = 'toast' + (type === 'success' ? ' toast-success' : '');
+    t.setAttribute('role', 'alert');
+    t.innerHTML = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 400);
+    }, 4500);
+  }
+
+  function setStep(step) {
+    const dots = [document.getElementById('stepDot1'), document.getElementById('stepDot2'), document.getElementById('stepDot3')];
+    const lines = [document.getElementById('stepLine1'), document.getElementById('stepLine2')];
+    dots.forEach((d, i) => {
+      if (!d) return;
+      d.classList.remove('active', 'done');
+      if (i + 1 < step) d.classList.add('done');
+      else if (i + 1 === step) d.classList.add('active');
+    });
+    lines.forEach((l, i) => {
+      if (!l) return;
+      l.classList.toggle('done', i + 1 < step);
+    });
+  }
+
+  function fieldError(id, show) {
+    const err = document.getElementById('err-' + id);
+    const inp = document.getElementById(id);
+    if (!err || !inp) return;
+    if (show) {
+      err.classList.add('show');
+      inp.classList.add('is-invalid');
+    } else {
+      err.classList.remove('show');
+      inp.classList.remove('is-invalid');
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SELECTION CARDS (PARTICIPANT CATEGORY & GENDER)
+  ══════════════════════════════════════════════════════════ */
+  function setCardSelected(labelEl, dotEl, selected) {
+    if (!labelEl) return;
+    const iconBox = labelEl.querySelector('.card-icon-box');
+    if (selected) {
+      labelEl.style.borderColor = 'var(--maroon)';
+      labelEl.style.background = 'linear-gradient(135deg, rgba(123,18,48,0.08) 0%, rgba(201,151,42,0.06) 100%)';
+      labelEl.style.color = 'var(--maroon-dark)';
+      labelEl.style.boxShadow = '0 0 0 3px rgba(123,18,48,0.18)';
+      if (iconBox) {
+        iconBox.style.background = 'var(--maroon)';
+        iconBox.style.color = '#fff';
+      }
+    } else {
+      labelEl.style.borderColor = 'rgba(123,18,48,0.18)';
+      labelEl.style.background = '#fff';
+      labelEl.style.color = 'var(--text-mid)';
+      labelEl.style.boxShadow = '';
+      if (iconBox) {
+        iconBox.style.background = 'rgba(123,18,48,0.06)';
+        iconBox.style.color = 'var(--maroon)';
+      }
+    }
+  }
+
+  function refreshCardGroup(groupName) {
+    const radios = document.querySelectorAll(`input[name="${groupName}"]`);
+    radios.forEach(r => {
+      const card = document.querySelector(`label[for="${r.id}"]`) || document.getElementById(`lbl-${r.id}`);
+      const dot = document.getElementById(`dot-${r.id}`);
+      setCardSelected(card, dot, r.checked);
+    });
+  }
+
+  function initCardHover() {
+    document.querySelectorAll('.selection-card').forEach(card => {
+      card.addEventListener('mouseenter', function () {
+        const radio = document.getElementById(this.getAttribute('for'));
+        if (!radio || !radio.checked) {
+          this.style.borderColor = 'rgba(123,18,48,0.35)';
+          this.style.boxShadow = '0 4px 16px rgba(123,18,48,0.08)';
+        }
+      });
+      card.addEventListener('mouseleave', function () {
+        const radio = document.getElementById(this.getAttribute('for'));
+        if (!radio || !radio.checked) {
+          this.style.borderColor = 'rgba(123,18,48,0.18)';
+          this.style.boxShadow = '';
+        }
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     LIVE AVAILABILITY & ACADEMIC DATA
+  ══════════════════════════════════════════════════════════ */
+  function loadAvailability(isManual = false) {
+    const icon = document.getElementById('refreshIcon');
+    if (icon && isManual) icon.style.animation = 'vrSpin 0.8s linear';
+
+    fetch("/api/method/volunteer_management.api.get_availability")
+      .then(r => r.json())
+      .then(data => {
+        if (icon) icon.style.animation = '';
+        if (data.message) {
+          liveData = data.message;
+          updateAvailabilityUI(liveData);
+          populateDropdowns(liveData.master_options);
+          if (isManual) showToast('Availability refreshed', 'success');
+        }
+      })
+      .catch(err => {
+        if (icon) icon.style.animation = '';
+        console.error("Error loading availability:", err);
+        if (isManual) showToast('Could not refresh availability. Please try again.');
+      });
+  }
+
+  function updateAvailabilityUI(data) {
+    if (!data) return;
+
+    if (!data.is_open) {
+      const alertBox = document.getElementById("windowAlert");
+      const alertText = document.getElementById("windowAlertText");
+      if (alertText) alertText.textContent = data.window_message || "Volunteer registration is currently closed.";
+      if (alertBox) alertBox.style.display = "block";
+      const submitBtn = document.getElementById("btnSubmit");
+      if (submitBtn) submitBtn.disabled = true;
+      const mct = document.getElementById('mobileCta');
+      if (mct) mct.style.display = 'none';
+    } else {
+      const alertBox = document.getElementById("windowAlert");
+      if (alertBox) alertBox.style.display = "none";
+    }
+
+
+    // Setup dynamic academic cascading dropdowns
+    setupAcademicDropdowns(data);
+    handleClassificationChange();
+  }
+
+  function setupAcademicDropdowns(data) {
+    if (data && data.academic) {
+      academicData = data.academic;
+    }
+
+    const schoolSelect = document.getElementById("school");
+    const courseSelect = document.getElementById("course");
+    const branchSelect = document.getElementById("branch");
+    const staffSchoolSelect = document.getElementById("staffSchool");
+
+    if (!schoolSelect || !courseSelect || !branchSelect) return;
+
+    const currentSchool = schoolSelect.value;
+    const currentCourse = courseSelect.value;
+    const currentBranch = branchSelect.value;
+    const currentStaffSchool = staffSchoolSelect ? staffSchoolSelect.value : "";
+
+    // 1. Populate School options
+    if (academicData.schools && academicData.schools.length > 0) {
+      const existingVal = schoolSelect.value;
+      schoolSelect.innerHTML = '<option value="">-- Select School --</option>';
+      academicData.schools.forEach(s => {
+        const opt = document.createElement("option");
+        const name = s.school_name || s.name;
+        opt.value = name;
+        opt.textContent = name;
+        schoolSelect.appendChild(opt);
+      });
+      if (existingVal || currentSchool) {
+        schoolSelect.value = existingVal || currentSchool;
+      }
+    }
+
+    // 2. Populate Staff School options
+    if (staffSchoolSelect && academicData.schools && academicData.schools.length > 0) {
+      const existingStaffVal = staffSchoolSelect.value;
+      staffSchoolSelect.innerHTML = '<option value="">-- Select School --</option>';
+      academicData.schools.forEach(s => {
+        const opt = document.createElement("option");
+        const name = s.school_name || s.name;
+        opt.value = name;
+        opt.textContent = name;
+        staffSchoolSelect.appendChild(opt);
+      });
+      if (existingStaffVal || currentStaffSchool) {
+        staffSchoolSelect.value = existingStaffVal || currentStaffSchool;
+      }
+    }
+
+    // Helper function: Update courses for selected school
+    function populateCoursesForSchool(selectedSchool, targetCourseValue = "") {
+      courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+      branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
+      branchSelect.disabled = true;
+
+      if (!selectedSchool) {
+        courseSelect.disabled = true;
+        courseSelect.innerHTML = '<option value="">-- Select School First --</option>';
+        return;
+      }
+
+      const matchingCourses = (academicData.courses || []).filter(c => c.school === selectedSchool);
+      if (matchingCourses.length === 0) {
+        courseSelect.innerHTML = '<option value="">No courses available</option>';
+        courseSelect.disabled = true;
+        return;
+      }
+
+      const seenCourses = new Set();
+      matchingCourses.forEach(c => {
+        const cName = c.course_name || c.name;
+        if (!seenCourses.has(cName)) {
+          seenCourses.add(cName);
+          const opt = document.createElement("option");
+          opt.value = cName;
+          opt.textContent = cName;
+          courseSelect.appendChild(opt);
+        }
+      });
+      courseSelect.disabled = false;
+      if (targetCourseValue && seenCourses.has(targetCourseValue)) {
+        courseSelect.value = targetCourseValue;
+      }
+    }
+
+    // Helper function: Update branches for selected course & school
+    function populateBranchesForCourse(selectedCourseName, selectedSchool, targetBranchValue = "") {
+      branchSelect.innerHTML = '<option value="">-- Select Branch --</option>';
+
+      if (!selectedCourseName) {
+        branchSelect.disabled = true;
+        branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
+        return;
+      }
+
+      const matchingBranches = (academicData.branches || []).filter(b => {
+        const matchesSchool = !b.school || b.school === selectedSchool;
+        const matchesCourse = b.course === selectedCourseName ||
+          b.course.startsWith(selectedCourseName + ' -') ||
+          (b.branch_name && b.course && b.course.includes(selectedCourseName));
+        return matchesSchool && matchesCourse;
+      });
+
+      if (matchingBranches.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "General";
+        opt.textContent = "General";
+        branchSelect.appendChild(opt);
+        branchSelect.disabled = false;
+        if (targetBranchValue === "General") branchSelect.value = "General";
+        return;
+      }
+
+      const seenBranches = new Set();
+      matchingBranches.forEach(b => {
+        const bName = b.branch_name || b.name;
+        if (!seenBranches.has(bName)) {
+          seenBranches.add(bName);
+          const opt = document.createElement("option");
+          opt.value = bName;
+          opt.textContent = bName;
+          branchSelect.appendChild(opt);
+        }
+      });
+      branchSelect.disabled = false;
+      if (targetBranchValue && seenBranches.has(targetBranchValue)) {
+        branchSelect.value = targetBranchValue;
+      }
+    }
+
+    // Attach change listeners
+    schoolSelect.onchange = function () {
+      fieldError('school', false);
+      populateCoursesForSchool(this.value);
+    };
+
+    courseSelect.onchange = function () {
+      fieldError('course', false);
+      populateBranchesForCourse(this.value, schoolSelect.value);
+    };
+
+    branchSelect.onchange = function () {
+      fieldError('branch', false);
+    };
+
+    // Sync initial state if school is selected
+    if (schoolSelect.value) {
+      populateCoursesForSchool(schoolSelect.value, currentCourse);
+      if (courseSelect.value) {
+        populateBranchesForCourse(courseSelect.value, schoolSelect.value, currentBranch);
+      }
+    } else {
+      courseSelect.disabled = true;
+      courseSelect.innerHTML = '<option value="">-- Select School First --</option>';
+      branchSelect.disabled = true;
+      branchSelect.innerHTML = '<option value="">-- Select Course First --</option>';
+    }
+  }
+
+  function populateDropdowns(options) {
+    if (!options) return;
+    const populate = (id, list) => {
+      const el = document.getElementById(id);
+      if (!el || !list) return;
+      const current = el.value;
+      el.innerHTML = '<option value="">-- Select --</option>';
+      list.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item; opt.textContent = item;
+        el.appendChild(opt);
+      });
+      if (current) el.value = current;
+    };
+    populate("yearOfStudy", options.year_of_study);
+    populate("department", options.department);
+  }
+
+  function getSelectedGroup() {
+    const cat = document.querySelector('input[name="participant_category"]:checked');
+    const gen = document.querySelector('input[name="gender"]:checked');
+    if (!cat || !gen) return null;
+    const map = {
+      'Student_Female': 'Female Students',
+      'Student_Male': 'Male Students',
+      'Staff_Female': 'Female Staff',
+      'Staff_Male': 'Male Staff',
+    };
+    return map[`${cat.value}_${gen.value}`] || null;
+  }
+
+  function handleClassificationChange() {
+    const cat = document.querySelector('input[name="participant_category"]:checked');
+    const gen = document.querySelector('input[name="gender"]:checked');
+    const group = getSelectedGroup();
+    const dynamicContainer = document.getElementById("dynamicFieldsContainer");
+    const studentFields = document.getElementById("studentFields");
+    const staffFields = document.getElementById("staffFields");
+    const alertBox = document.getElementById("categoryAlert");
+    const submitBtn = document.getElementById("btnSubmit");
+    const mobileCta = document.getElementById("mobileCta");
+
+    // Highlight active category card in live dashboard
+    const catKeys = ["Female Students", "Male Students", "Female Staff", "Male Staff"];
+    catKeys.forEach(k => {
+      const idSafe = k.replace(/ /g, "-");
+      const cardEl = document.getElementById("card-" + idSafe);
+      if (cardEl) {
+        if (k === group) {
+          cardEl.style.borderColor = "var(--maroon)";
+          cardEl.style.boxShadow = "0 0 0 3px rgba(123,18,48,0.18), 0 8px 30px rgba(123,18,48,0.12)";
+          cardEl.style.transform = "translateY(-2px)";
+        } else {
+          cardEl.style.borderColor = "rgba(123,18,48,0.10)";
+          cardEl.style.boxShadow = "0 4px 24px rgba(123,18,48,0.08)";
+          cardEl.style.transform = "";
+        }
+      }
+    });
+
+    if (!cat || !gen) {
+      if (dynamicContainer) dynamicContainer.style.display = "none";
+      if (alertBox) alertBox.style.display = "none";
+      if (mobileCta) mobileCta.style.display = 'none';
+      setStep(1);
+      return;
+    }
+
+    // Show relevant fields
+    if (dynamicContainer) dynamicContainer.style.display = "block";
+    if (submitBtn) submitBtn.disabled = !liveData || !liveData.is_open;
+    if (mobileCta) mobileCta.style.display = (!liveData || !liveData.is_open) ? 'none' : 'block';
+
+    // Category alert
+    if (alertBox && group) {
+      alertBox.className = "vr-cat-alert state-open";
+      alertBox.textContent = "✓ " + group + " — Open for volunteer registration.";
+      alertBox.style.display = "block";
+    }
+
+    if (cat.value === "Student") {
+      if (studentFields) studentFields.style.display = "block";
+      if (staffFields) staffFields.style.display = "none";
+    } else {
+      if (studentFields) studentFields.style.display = "none";
+      if (staffFields) staffFields.style.display = "block";
+    }
+
+    setStep(2);
+  }
+
+  function validateField(id) {
+    const el = document.getElementById(id);
+    if (!el) return true;
+    const v = (el.value || '').trim();
+    let ok = true;
+    switch (id) {
+      case 'fullName': ok = v.length >= 2; break;
+      case 'enrollmentNumber': ok = v.length >= 3; break;
+      case 'contactNumber': ok = phoneRegex.test(v.replace(/[\s\-]/g, '')); break;
+      case 'yearOfStudy': case 'course': case 'branch': case 'school':
+      case 'department': case 'staffSchool':
+        ok = v.length > 0; break;
+    }
+    fieldError(id, !ok);
+    return ok;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     FORM SUBMISSION
+  ══════════════════════════════════════════════════════════ */
+  function handleSubmit(e) {
+    if (e) e.preventDefault();
+    const errorBox = document.getElementById("submitErrorAlert");
+    if (errorBox) errorBox.style.display = "none";
+
+    const cat = document.querySelector('input[name="participant_category"]:checked');
+    const gen = document.querySelector('input[name="gender"]:checked');
+    const fullNameEl = document.getElementById("fullName");
+    const fullName = fullNameEl ? fullNameEl.value.trim() : "";
+
+    if (!cat || !gen) { showError("Please select both Participant Category and Gender."); return; }
+    if (!validateField('fullName')) { showError("Please enter your Full Name."); return; }
+
+    const payload = { participant_category: cat.value, gender: gen.value, full_name: fullName };
+    let firstInvalid = null;
+
+    if (cat.value === "Student") {
+      const fields = ['school', 'course', 'branch', 'yearOfStudy', 'enrollmentNumber'];
+      for (const f of fields) {
+        if (!validateField(f)) { firstInvalid = firstInvalid || f; }
+      }
+      if (firstInvalid) {
+        const el = document.getElementById(firstInvalid);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showError("Please fix the highlighted fields above.");
+        return;
+      }
+      payload.enrollment_number = document.getElementById("enrollmentNumber").value.trim();
+      payload.year_of_study = document.getElementById("yearOfStudy").value;
+      payload.course = document.getElementById("course").value;
+      payload.branch = document.getElementById("branch").value;
+      payload.school = document.getElementById("school").value;
+                } else {
+      const fields = ['department', 'staffSchool', 'contactNumber'];
+      for (const f of fields) {
+        if (!validateField(f)) { firstInvalid = firstInvalid || f; }
+      }
+      if (firstInvalid) {
+        const el = document.getElementById(firstInvalid);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showError("Please fix the highlighted fields above.");
+        return;
+      }
+      payload.department = document.getElementById("department").value;
+      payload.staff_school = document.getElementById("staffSchool").value;
+      payload.contact_number = document.getElementById("contactNumber").value.trim();
+    }
+
+    const btn = document.getElementById("btnSubmit");
+    const spinner = document.getElementById("btnSubmitSpinner");
+    const btnText = document.getElementById("btnSubmitText");
+    const mct = document.getElementById("mobileCtaText");
+    if (btn) btn.disabled = true;
+    if (spinner) spinner.style.display = "inline-block";
+    if (btnText) btnText.textContent = "Registering…";
+    if (mct) mct.textContent = "Registering…";
+
+    fetch("/api/method/volunteer_management.api.submit_registration", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Frappe-CSRF-Token": (window.frappe && window.frappe.csrf_token) ? window.frappe.csrf_token : ""
+      },
+      body: JSON.stringify({ data: payload })
+    })
+      .then(r => r.json())
+      .then(res => {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.style.display = "none";
+        if (btnText) btnText.textContent = "Register as Volunteer";
+        if (mct) mct.textContent = "Register as Volunteer";
+
+        if (res.message && res.message.success) {
+          showConfirmation(res.message);
+          loadAvailability();
+        } else {
+          const err = res._server_messages
+            ? parseServerMessages(res._server_messages)
+            : (res.exc || (res.message && res.message.message) || "Registration failed. Please verify your details.");
+          showError(err);
+          showToast("Registration failed. Please check the details.");
+        }
+      })
+      .catch(err => {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.style.display = "none";
+        if (btnText) btnText.textContent = "Register as Volunteer";
+        if (mct) mct.textContent = "Register as Volunteer";
+        showError("A network or server error occurred. Please try again.");
+        showToast("Network error. Please try again.");
+      });
+  }
+
+  function parseServerMessages(messagesJson) {
+    try {
+      const arr = JSON.parse(messagesJson);
+      const msgs = arr.map(m => { const obj = JSON.parse(m); return obj.message; });
+      return msgs.join("<br>");
+    } catch (e) { return messagesJson; }
+  }
+
+  function showError(msg) {
+    const errorBox = document.getElementById("submitErrorAlert");
+    if (!errorBox) return;
+    errorBox.innerHTML = msg;
+    errorBox.style.display = "block";
+    errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CONFIRMATION + CONFETTI
+  ══════════════════════════════════════════════════════════ */
+  function fireConfetti() {
+    const colors = ['#7b1230', '#c9972a', '#f0c060', '#1a7a4a', '#d4640a'];
+    for (let i = 0; i < 60; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDelay = (Math.random() * 0.6) + 's';
+      p.style.animationDuration = (2.6 + Math.random() * 1.4) + 's';
+      p.style.width = (6 + Math.random() * 8) + 'px';
+      p.style.height = (8 + Math.random() * 10) + 'px';
+      if (Math.random() > 0.6) p.style.borderRadius = '50%';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 4200);
+    }
+  }
+
+  function showConfirmation(data) {
+    const formCont = document.getElementById("formContainer");
+    const confCont = document.getElementById("confirmationContainer");
+    if (formCont) formCont.style.display = "none";
+    if (confCont) confCont.style.display = "block";
+    const mc = document.getElementById('mobileCta');
+    if (mc) mc.style.display = 'none';
+    setStep(3);
+
+    document.getElementById("confRegId").textContent = data.registration_id;
+    document.getElementById("confName").textContent = data.full_name;
+    document.getElementById("confCategory").textContent = data.participant_category + " (" + data.gender + ")";
+    document.getElementById("confGroup").textContent = data.participant_group;
+    document.getElementById("confDateTime").textContent = data.registration_date_time;
+
+    if (data.enrollment_number) {
+      document.getElementById("confEnroll").textContent = data.enrollment_number;
+      document.getElementById("confEnrollRow").style.display = "flex";
+    } else {
+      document.getElementById("confEnrollRow").style.display = "none";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    fireConfetti();
+    showToast('Registration successful!', 'success');
+  }
+
+  function copyRegId() {
+    const id = document.getElementById('confRegId').textContent;
+    navigator.clipboard.writeText(id).then(() => {
+      const btn = document.getElementById('copyBtn');
+      if (!btn) return;
+      btn.classList.add('copied');
+      btn.querySelector('span').textContent = 'Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.querySelector('span').textContent = 'Copy';
+      }, 2000);
+    });
+  }
+
+  function resetFormForNewRegistration() {
+    const form = document.getElementById("volunteerForm");
+    if (form) form.reset();
+    const courseSel = document.getElementById("course");
+    const branchSel = document.getElementById("branch");
+    if (courseSel) {
+      courseSel.innerHTML = '<option value="">-- Select School First --</option>';
+      courseSel.disabled = true;
+    }
+    if (branchSel) {
+      branchSel.innerHTML = '<option value="">-- Select Course First --</option>';
+      branchSel.disabled = true;
+    }
+    const confCont = document.getElementById("confirmationContainer");
+    const formCont = document.getElementById("formContainer");
+    const dynCont = document.getElementById("dynamicFieldsContainer");
+    const catAlert = document.getElementById("categoryAlert");
+    const errAlert = document.getElementById("submitErrorAlert");
+
+    if (confCont) confCont.style.display = "none";
+    if (formCont) formCont.style.display = "block";
+    if (dynCont) dynCont.style.display = "none";
+    if (catAlert) catAlert.style.display = "none";
+    if (errAlert) errAlert.style.display = "none";
+
+    ['participant_category', 'gender'].forEach(function (groupName) {
+      document.querySelectorAll('input[name="' + groupName + '"]').forEach(function (radio) {
+        setCardSelected(
+          document.getElementById('lbl-' + radio.id),
+          document.getElementById('dot-' + radio.id),
+          false
+        );
+      });
+    });
+
+    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    document.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+
+    setStep(1);
+    loadAvailability();
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     INITIALIZATION
+  ══════════════════════════════════════════════════════════ */
+  function initApp() {
+    initCardHover();
+
+    // Attach radio buttons and selection card click/change handlers
+    ['participant_category', 'gender'].forEach(name => {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+        radio.addEventListener('change', function () {
+          refreshCardGroup(name);
+          handleClassificationChange();
+        });
+      });
+    });
+
+    document.querySelectorAll('.selection-card').forEach(card => {
+      card.addEventListener('click', function (e) {
+        const forId = this.getAttribute('for');
+        if (forId) {
+          const radio = document.getElementById(forId);
+          if (radio && !radio.checked) {
+            radio.checked = true;
+            refreshCardGroup(radio.name);
+            handleClassificationChange();
+          }
+        }
+      });
+    });
+
+    // Attach validation on blur/input
+    const fieldsToValidate = [
+      'fullName', 'school', 'course', 'branch', 'yearOfStudy', 'enrollmentNumber',
+      'department', 'staffSchool', 'contactNumber'
+    ];
+    fieldsToValidate.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => { if (el.value.trim()) fieldError(id, false); });
+        el.addEventListener('change', () => { if (el.value.trim()) fieldError(id, false); });
+      }
+    });
+
+    // Attach Form Submit handler
+    const form = document.getElementById('volunteerForm');
+    if (form) {
+      form.addEventListener('submit', handleSubmit);
+    }
+
+    // Initial population from server-rendered context
+    if (liveData) {
+      updateAvailabilityUI(liveData);
+      if (liveData.master_options) {
+        populateDropdowns(liveData.master_options);
+      }
+    }
+
+    // Fetch latest live availability via API
+    loadAvailability();
+  }
+
+  // Bootstrap on ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+</script>
+
+{% endblock %}
