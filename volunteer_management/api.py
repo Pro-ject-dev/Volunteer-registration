@@ -5,8 +5,8 @@ import json
 import frappe
 from frappe import _
 from frappe.utils import now_datetime
-from volunteer_management.volunteer_management.doctype.volunteer_registration_settings.volunteer_registration_settings import (
-	VolunteerRegistrationSettings,
+from volunteer_management.volunteer_management.doctype.register_volunteer_registration_settings.register_volunteer_registration_settings import (
+	RegisterVolunteerRegistrationSettings,
 )
 
 
@@ -15,7 +15,7 @@ def get_availability():
 	"""
 	Exposes live registration statistics and dynamic academic hierarchy (Register School -> Register Course -> Register Branch).
 	"""
-	stats = VolunteerRegistrationSettings.get_live_stats()
+	stats = RegisterVolunteerRegistrationSettings.get_live_stats()
 
 	# Dynamic academic master options
 	schools = frappe.get_all(
