@@ -161,11 +161,12 @@
     border: 1.5px solid #fbbf24;
     border-left: 5px solid var(--saffron);
     border-radius: 12px;
-    padding: 12px 16px;
+    padding: 24px 32px;
     color: var(--warn-orange);
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 24px;
+    text-align: center;
   }
 
   .vr-cat-alert {
@@ -656,9 +657,7 @@
   </div>
 
   <!-- ═══════ REGISTRATION FORM CONTAINER ═══════ -->
-  <section class="rounded-2xl mb-6 p-3 sm:p-7 md:p-8" id="formContainer" style="background: #fff; border: 1.5px solid rgba(123,18,48,0.10);
-                    box-shadow: 0 4px 24px rgba(123,18,48,0.08);">
-
+  <section class="rounded-2xl mb-6 p-3 sm:p-7 md:p-8" id="stepperContainer" style="background: #fff; border: 1.5px solid rgba(123,18,48,0.10); box-shadow: 0 4px 24px rgba(123,18,48,0.08);">
     <!-- Step indicator -->
     <div class="flex items-center gap-2 mb-4 sm:mb-6" aria-label="Progress">
       <div class="step-dot active" id="stepDot1">1</div>
@@ -667,6 +666,11 @@
       <div class="step-line" id="stepLine2"></div>
       <div class="step-dot" id="stepDot3">3</div>
     </div>
+  </section>
+  <section class="rounded-2xl mb-6 p-3 sm:p-7 md:p-8" id="formContainer" style="background: #fff; border: 1.5px solid rgba(123,18,48,0.10);
+                    box-shadow: 0 4px 24px rgba(123,18,48,0.08);">
+
+
 
     <h2 class="font-extrabold mb-1 text-lg sm:text-xl" style="color: var(--maroon-dark);">
       Volunteer Registration
@@ -807,6 +811,13 @@
                 <option value="">-- Select School --</option>
               </select>
               <div class="field-error" id="err-school">Please select your school.</div>
+            </div>
+            <div class="sm:col-span-2" id="otherSchoolContainer" style="display: none; margin-top: 1rem;">
+              <label class="block font-bold tracking-wide mb-1 text-xs" style="color: var(--text-mid);" for="otherSchool">
+                Other School Name <span style="color: var(--saffron);">*</span>
+              </label>
+              <input type="text" class="form-control" id="otherSchool" name="other_school" placeholder="Enter your school name">
+              <div class="field-error" id="err-otherSchool">Please enter your school name.</div>
             </div>
 
 
@@ -1112,6 +1123,10 @@
       const alertText = document.getElementById("windowAlertText");
       if (alertText) alertText.textContent = data.window_message || "Volunteer registration is currently closed.";
       if (alertBox) alertBox.style.display = "block";
+      const formContainer = document.getElementById("formContainer");
+      if (formContainer) formContainer.style.display = "none";
+      const stepperContainer = document.getElementById("stepperContainer");
+      if (stepperContainer) stepperContainer.style.display = "none";
       const submitBtn = document.getElementById("btnSubmit");
       if (submitBtn) submitBtn.disabled = true;
       const mct = document.getElementById('mobileCta');
@@ -1119,6 +1134,13 @@
     } else {
       const alertBox = document.getElementById("windowAlert");
       if (alertBox) alertBox.style.display = "none";
+      const confCont = document.getElementById("confirmationContainer");
+      if (!confCont || confCont.style.display === "none") {
+        const formContainer = document.getElementById("formContainer");
+        if (formContainer) formContainer.style.display = "block";
+      }
+      const stepperContainer = document.getElementById("stepperContainer");
+      if (stepperContainer) stepperContainer.style.display = "block";
     }
 
 
@@ -1175,6 +1197,13 @@
     // Attach change listeners
     schoolSelect.onchange = function () {
       fieldError('school', false);
+      const otherContainer = document.getElementById("otherSchoolContainer");
+      if (this.value === "Others") {
+        otherContainer.style.display = "block";
+      } else {
+        otherContainer.style.display = "none";
+        document.getElementById("otherSchool").value = "";
+      }
     };
   }
 
@@ -1278,7 +1307,7 @@
       case 'fullName': ok = v.length >= 2; break;
       case 'enrollmentNumber': ok = v.length >= 3; break;
       case 'contactNumber': ok = phoneRegex.test(v.replace(/[\s\-]/g, '')); break;
-      case 'yearOfStudy': case 'course': case 'branch': case 'school':
+      case 'yearOfStudy': case 'course': case 'branch': case 'school': case 'otherSchool':
       case 'department': case 'staffSchool':
         ok = v.length > 0; break;
     }
@@ -1321,6 +1350,9 @@
 
 
       payload.school = document.getElementById("school").value;
+      if (payload.school === "Others") {
+        payload.other_school = document.getElementById("otherSchool").value;
+      }
     } else {
       const fields = ['staffSchool', 'contactNumber'];
       for (const f of fields) {
@@ -1485,7 +1517,7 @@
       });
     });
 
-    const fieldsToClear = ['fullName', 'school', 'yearOfStudy', 'enrollmentNumber', 'staffSchool', 'contactNumber'];
+    const fieldsToClear = ['fullName', 'school', 'otherSchool', 'yearOfStudy', 'enrollmentNumber', 'staffSchool', 'contactNumber'];
     fieldsToClear.forEach(id => {
       const el = document.getElementById(id);
       if (el) {
