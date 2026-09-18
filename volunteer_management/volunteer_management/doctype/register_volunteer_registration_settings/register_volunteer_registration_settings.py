@@ -53,7 +53,9 @@ class RegisterVolunteerRegistrationSettings(Document):
 
 		# Check registration window
 		now = now_datetime()
-		is_open = bool(settings.registration_open)
+		is_open_for_students = bool(settings.registration_open_for_students)
+		is_open_for_staff = bool(settings.registration_open_for_staff)
+		is_open = is_open_for_students or is_open_for_staff
 		window_message = "Registration is open."
 
 		opening_dt = get_datetime(settings.opening_date_time) if settings.opening_date_time else None
@@ -61,6 +63,10 @@ class RegisterVolunteerRegistrationSettings(Document):
 
 		if not is_open:
 			window_message = "Registration is currently closed by the administrator."
+		elif not is_open_for_students and is_open_for_staff:
+			window_message = "Student registration is currently closed. Registration is only open for Staff."
+		elif not is_open_for_staff and is_open_for_students:
+			window_message = "Staff registration is currently closed. Registration is only open for Students."
 		elif opening_dt and now < opening_dt:
 			is_open = False
 			window_message = f"Registration opens on {settings.opening_date_time}."
@@ -90,6 +96,8 @@ class RegisterVolunteerRegistrationSettings(Document):
 
 		return {
 			"is_open": is_open,
+			"is_open_for_students": is_open_for_students,
+			"is_open_for_staff": is_open_for_staff,
 			"window_message": window_message,
 			"event_name": settings.event_name,
 			"campus": settings.campus,

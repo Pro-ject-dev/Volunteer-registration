@@ -1118,34 +1118,69 @@
   function updateAvailabilityUI(data) {
     if (!data) return;
 
+    const alertBox = document.getElementById("windowAlert");
+    const alertText = document.getElementById("windowAlertText");
+    const formContainer = document.getElementById("formContainer");
+    const stepperContainer = document.getElementById("stepperContainer");
+    const submitBtn = document.getElementById("btnSubmit");
+    const mct = document.getElementById('mobileCta');
+
     if (!data.is_open) {
-      const alertBox = document.getElementById("windowAlert");
-      const alertText = document.getElementById("windowAlertText");
       if (alertText) alertText.textContent = data.window_message || "Volunteer registration is currently closed.";
       if (alertBox) alertBox.style.display = "block";
-      const formContainer = document.getElementById("formContainer");
       if (formContainer) formContainer.style.display = "none";
-      const stepperContainer = document.getElementById("stepperContainer");
       if (stepperContainer) stepperContainer.style.display = "none";
-      const submitBtn = document.getElementById("btnSubmit");
       if (submitBtn) submitBtn.disabled = true;
-      const mct = document.getElementById('mobileCta');
       if (mct) mct.style.display = 'none';
     } else {
-      const alertBox = document.getElementById("windowAlert");
-      if (alertBox) alertBox.style.display = "none";
+      if (!data.is_open_for_students || !data.is_open_for_staff) {
+        if (alertText) alertText.textContent = data.window_message;
+        if (alertBox) alertBox.style.display = "block";
+      } else {
+        if (alertBox) alertBox.style.display = "none";
+      }
+
       const confCont = document.getElementById("confirmationContainer");
       if (!confCont || confCont.style.display === "none") {
-        const formContainer = document.getElementById("formContainer");
         if (formContainer) formContainer.style.display = "block";
       }
-      const stepperContainer = document.getElementById("stepperContainer");
       if (stepperContainer) stepperContainer.style.display = "block";
+      if (submitBtn) submitBtn.disabled = false;
     }
 
 
     // Setup dynamic academic cascading dropdowns
     setupAcademicDropdowns(data);
+    const catStudent = document.getElementById("catStudent");
+    const catStaff = document.getElementById("catStaff");
+    if (catStudent) {
+      if (!data.is_open_for_students) {
+        catStudent.disabled = true;
+        catStudent.checked = false;
+        catStudent.style.display = "none";
+        const lbl = document.getElementById("lbl-catStudent");
+        if (lbl) lbl.style.display = "none";
+      } else {
+        catStudent.disabled = false;
+        catStudent.style.display = "";
+        const lbl = document.getElementById("lbl-catStudent");
+        if (lbl) { lbl.style.display = "flex"; lbl.style.opacity = "1"; lbl.style.cursor = "pointer"; }
+      }
+    }
+    if (catStaff) {
+      if (!data.is_open_for_staff) {
+        catStaff.disabled = true;
+        catStaff.checked = false;
+        catStaff.style.display = "none";
+        const lbl = document.getElementById("lbl-catStaff");
+        if (lbl) lbl.style.display = "none";
+      } else {
+        catStaff.disabled = false;
+        catStaff.style.display = "";
+        const lbl = document.getElementById("lbl-catStaff");
+        if (lbl) { lbl.style.display = "flex"; lbl.style.opacity = "1"; lbl.style.cursor = "pointer"; }
+      }
+    }
     handleClassificationChange();
   }
 

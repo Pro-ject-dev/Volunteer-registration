@@ -137,8 +137,10 @@ class RegisterVolunteerRegistration(Document):
 				return
 
 			settings = frappe.get_single("Register Volunteer Registration Settings")
-			if not settings.registration_open:
-				frappe.throw(_("Volunteer registration is currently closed by the administrator."))
+			if self.participant_category == "Student" and not settings.registration_open_for_students:
+				frappe.throw(_("Student volunteer registration is currently closed by the administrator."))
+			if self.participant_category == "Staff" and not settings.registration_open_for_staff:
+				frappe.throw(_("Staff volunteer registration is currently closed by the administrator."))
 
 			now = now_datetime()
 			opening_dt = get_datetime(settings.opening_date_time) if settings.opening_date_time else None
